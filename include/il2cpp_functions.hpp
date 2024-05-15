@@ -1,5 +1,5 @@
-#ifndef GLUON_IL2CPP_FUNCTIONS_H_
-#define GLUON_IL2CPP_FUNCTIONS_H_
+#ifndef GLUON_IL2CPP_FUNCTIONS_HPP_
+#define GLUON_IL2CPP_FUNCTIONS_HPP_
 
 #include <type_traits>
 
@@ -266,4 +266,4 @@ namespace Gluon {
     };
 }
 
-#endif //GLUON_IL2CPP_FUNCTIONS_H_
+#endif //GLUON_IL2CPP_FUNCTIONS_HPP_
