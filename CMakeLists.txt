@@ -56,8 +56,7 @@ if (WIN32)
     )
 endif ()
 
-add_library(Gluon SHARED
-        include/il2cpp_functions.hpp)
+add_library(Gluon SHARED)
 
 target_include_directories(Gluon PRIVATE ${IL2CPP_DIR})
 

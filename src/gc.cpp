@@ -1,10 +1,10 @@
 #include <cstddef>
 #include <cstring>
 
-#include "il2cpp_gc.hpp"
+#include "gc.hpp"
 #include "il2cpp_functions.hpp"
 
-namespace Gluon::Il2CppGc {
+namespace Gluon::Gc {
     [[nodiscard]] void *gcAllocSpecific(size_t size) {
         void *address = Gluon::Il2CppFunctions::gc_alloc_fixed(size);
         return address;

@@ -2,8 +2,14 @@
 
 #include "il2cpp_functions.hpp"
 
+#include "gluon_logging.hpp"
+
 #define IL2CPP_INIT(rt, name, ...) rt(*Gluon::Il2CppFunctions::il2cpp_##name) __VA_ARGS__
-#define IL2CPP_LOAD(name) *reinterpret_cast<FARPROC *>(&il2cpp_##name) = GetProcAddress(il2cppAssembly, "il2cpp_" #name)
+
+#define IL2CPP_LOAD(name) \
+*reinterpret_cast<FARPROC *>(&il2cpp_##name) = GetProcAddress(il2cppAssembly, "il2cpp_" #name); \
+Gluon::Logging::Logger::info("Loaded: " #name ", error: {}", GetLastError());                                  \
+SetLastError(0)
 
 #pragma region IL2CPP Exports
 IL2CPP_INIT(int, init, (const char* domain_name));

@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <new>
 
-namespace Gluon::Il2CppGc {
+namespace Gluon::Gc {
 
     /**
      * @brief @brief Returns an allocated instance of the provided size that will not be written over by future GC allocations and holds references.
