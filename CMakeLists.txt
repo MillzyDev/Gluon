@@ -80,4 +80,8 @@ target_sources(
         ${gluon_sources}
 )
 
+add_subdirectory(capstone)
+target_include_directories(Gluon PRIVATE capstone/include)
+target_link_libraries(Gluon PRIVATE capstone)
+
 target_compile_definitions(Gluon PRIVATE GLUON_EXPORT)
