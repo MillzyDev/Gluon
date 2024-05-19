@@ -15,7 +15,7 @@ namespace Gluon::Methods {
             return nullptr;
         }
 
-        auto *object = reinterpret_cast<Il2CppObject *>(Gluon::Il2CppGc::gcAllocSpecific(klass->instance_size));
+        auto *object = reinterpret_cast<Il2CppObject *>(Gluon::Gc::gcAllocSpecific(klass->instance_size));
         if (!object) {
             // failed to allocate
             return nullptr;
