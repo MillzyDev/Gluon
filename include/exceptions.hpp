@@ -38,7 +38,8 @@ namespace Gluon::Exceptions {
         const Il2CppClass *targetClass;
         Il2CppObject *instance;
 
-        BadCastException(const Il2CppClass *klass, const Il2CppClass *targetClass, Il2CppObject *inst) : StackTraceException(std::format("Failed to cast {} to {}", )) {}
+        // TODO
+        ///BadCastException(const Il2CppClass *klass, const Il2CppClass *targetClass, Il2CppObject *inst) : StackTraceException(std::format("Failed to cast {} to {}", )) {}
     };
 }
 
