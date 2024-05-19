@@ -3,6 +3,7 @@
 
 #include <type_traits>
 
+#include "gluon_config.hpp"
 #include "il2cpp-api-types.h"
 #include "il2cpp-metadata.h"
 #include "il2cpp-class-internals.h"
@@ -23,7 +24,7 @@ static rt name(TArgs &&...args) {               \
 }
 
 namespace Gluon {
-    class Il2CppFunctions {
+    class GLUON_API Il2CppFunctions {
     public:
 #pragma region IL2CPP Exports
         IL2CPP_FUNC(int, init, (const char* domain_name));
