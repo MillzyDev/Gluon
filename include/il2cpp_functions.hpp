@@ -263,7 +263,7 @@ namespace Gluon {
 #pragma endregion
 
         static bool initialised;
-        static void Init();
+        static void initialise();
     };
 }
 

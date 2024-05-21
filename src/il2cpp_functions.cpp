@@ -250,7 +250,7 @@ IL2CPP_INIT(void, set_default_thread_affinity, (int64_t affinity_mask));
 namespace Gluon {
     bool Il2CppFunctions::initialised;
 
-    void Il2CppFunctions::Init() {
+    void Il2CppFunctions::initialise() {
         constexpr const char *kIl2CppAssembly = "GameAssembly.dll";
 
         if (initialised) {

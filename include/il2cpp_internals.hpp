@@ -5,11 +5,12 @@
 #include "il2cpp-class-internals.h"
 
 namespace Gluon {
-    class GLUON_API Il2cppInternals {
+    class GLUON_API Il2CppInternals {
     public:
+        static bool initialised;
         static const Il2CppDefaults *defaults;
 
-        static void Init();
+        static void initialise();
     };
 }
 
