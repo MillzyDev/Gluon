@@ -8,6 +8,8 @@
 #include "gluon_logging.hpp"
 #include "capstone/capstone.h"
 
+// words cannot describe, how much i hated writing/porting this xref stuff
+
 namespace Gluon::XrefHelpers {
     GLUON_API void initialiseCapstone();
     GLUON_API csh getCapstoneHandle();

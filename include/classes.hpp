@@ -8,6 +8,8 @@
 
 namespace Gluon::Classes {
     GLUON_API std::string getClassStandardName(const Il2CppClass *klass, bool generics = true);
+
+    GLUON_API Il2CppClass *findClassFromName(std::string_view namespaze, std::string_view name);
 }
 
 #endif
