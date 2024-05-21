@@ -8,7 +8,7 @@ namespace Gluon {
     class GLUON_API Il2CppInternals {
     public:
         static bool initialised;
-        static const Il2CppDefaults *defaults;
+        static Il2CppDefaults defaults;
 
         /**
          * @warning DO NOT CALL BEFORE IL2CPP HAS BEEN INITIALISED.

@@ -1,3 +1,5 @@
+#include <cstring>
+
 #include "il2cpp_internals.hpp"
 
 #include "il2cpp_functions.hpp"
@@ -6,7 +8,7 @@
 
 namespace Gluon {
     bool Il2CppInternals::initialised = false;
-    const Il2CppDefaults *Il2CppInternals::defaults;
+    Il2CppDefaults Il2CppInternals::defaults;
 
     void Il2CppInternals::initialise() {
         if (initialised) {
@@ -14,6 +16,8 @@ namespace Gluon {
         }
         initialised = true;
 
+        std::memset(&defaults, 0, sizeof(Il2CppDefaults));
+        
         // TODO: defaults type map, avoiding an xref trace because pain
     }
 }
