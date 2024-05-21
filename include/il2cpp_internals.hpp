@@ -10,6 +10,9 @@ namespace Gluon {
         static bool initialised;
         static const Il2CppDefaults *defaults;
 
+        /**
+         * @warning DO NOT CALL BEFORE IL2CPP HAS BEEN INITIALISED.
+         */
         static void initialise();
     };
 }
