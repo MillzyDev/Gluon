@@ -12,10 +12,48 @@
 #include "gluon_logging.hpp"
 #include "hashing.hpp"
 #include "il2cpp_functions.hpp"
+#include "il2cpp_internals.hpp"
 
 #include "il2cpp-runtime-metadata.h"
 
 namespace Gluon::Classes {
+    const char *typeGetSimpleName(const Il2CppType *type) {
+        static std::unordered_map<Il2CppClass *, const char *> typeIndex;
+        static std::mutex typeIndexMutex;
+
+        Gluon::Il2CppFunctions::initialise();
+        Gluon::Il2CppInternals::initialise();
+
+        typeIndexMutex.lock();
+        if (typeIndex.empty()) {
+            typeIndex[Gluon::Il2CppInternals::builtinClasses.booleanClass] = "bool";
+            typeIndex[Gluon::Il2CppInternals::builtinClasses.byteClass] = "byte";
+            typeIndex[Gluon::Il2CppInternals::builtinClasses.sByteClass] = "sbyte";
+            typeIndex[Gluon::Il2CppInternals::builtinClasses.charClass] = "char";
+            typeIndex[Gluon::Il2CppInternals::builtinClasses.singleClass] = "float";
+            typeIndex[Gluon::Il2CppInternals::builtinClasses.doubleClass] = "double";
+            typeIndex[Gluon::Il2CppInternals::builtinClasses.int16Class] = "short";
+            typeIndex[Gluon::Il2CppInternals::builtinClasses.uint16Class] = "ushort";
+            typeIndex[Gluon::Il2CppInternals::builtinClasses.int32Class] = "int";
+            typeIndex[Gluon::Il2CppInternals::builtinClasses.uint32Class] = "uint32";
+            typeIndex[Gluon::Il2CppInternals::builtinClasses.int64Class] = "long";
+            typeIndex[Gluon::Il2CppInternals::builtinClasses.uint64Class] = "ulong";
+            typeIndex[Gluon::Il2CppInternals::builtinClasses.objectClass] = "object";
+            typeIndex[Gluon::Il2CppInternals::builtinClasses.stringClass] = "string";
+            typeIndex[Gluon::Il2CppInternals::builtinClasses.voidClass] = "void";
+        }
+
+        auto it = typeIndex.find(Gluon::Il2CppFunctions::class_from_il2cpp_type(type));
+        if (it != typeIndex.end()) {
+            typeIndexMutex.unlock();
+            return it->second;
+        }
+        else {
+            typeIndexMutex.unlock();
+            return Gluon::Il2CppFunctions::type_get_name(type);
+        }
+    }
+
     void genericsToStringHelper(Il2CppGenericClass *genericClass, std::ostream  &os) {
         Il2CppGenericContext *context = &genericClass->context;
         const Il2CppGenericInst *genericInst = context->class_inst;
@@ -35,9 +73,14 @@ namespace Gluon::Classes {
                 if (i > 0) {
                     os << ", ";
                 }
-                // TODO
-                //const char *typeName = Try
+
+                const char *typeName = typeGetSimpleName(type);
+                os << typeName;
             }
+            os << ">";
+        }
+        else {
+            Gluon::Logging::Logger::warn("context->class_inst missing for genericClass!");
         }
     }
 
@@ -46,7 +89,7 @@ namespace Gluon::Classes {
 
         std::stringstream ss;
         const char *namespaze = Gluon::Il2CppFunctions::class_get_namespace(klass);
-        auto *declaring = Gluon::Il2CppFunctions::class_get_declaring_type(klass);
+        Il2CppClass *declaring = Gluon::Il2CppFunctions::class_get_declaring_type(klass);
 
         bool hasNamespace = (namespaze && namespaze[0] != '\0');
         if (!hasNamespace && declaring) {
@@ -63,11 +106,11 @@ namespace Gluon::Classes {
             Il2CppGenericClass *genericClass = klass->generic_class;
 
             if (genericClass) {
-
+                genericsToStringHelper(genericClass, ss);
             }
         }
 
-        // TODO
+        return ss.str();
     }
 
     Il2CppClass *findNestedClass(Il2CppClass *declaring, std::string_view name) {

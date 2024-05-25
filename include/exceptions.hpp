@@ -23,7 +23,10 @@ namespace Gluon::Exceptions {
 
         GLUON_API void logBacktrace() const;
 
-        [[nodiscard]] virtual const char *what() const noexcept override;
+        [[nodiscard]] const char *what() const noexcept override {
+            logBacktrace();
+            return std::runtime_error::what();
+        }
     };
 
     struct NullException : public StackTraceException {

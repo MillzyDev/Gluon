@@ -7,8 +7,6 @@
 #include "classes.hpp"
 #include "il2cpp-class-internals.h"
 
-#define DEFAULTS_INIT(name, namespaze, klass, ...) defaults.name = Gluon::Classes::findClassFromName(namespaze, name)
-
 namespace Gluon {
     bool Il2CppInternals::initialised = false;
 
@@ -35,7 +33,5 @@ namespace Gluon {
         builtinClasses.stringClass = Gluon::Classes::findClassFromName("System", "String");
         builtinClasses.voidClass = Gluon::Classes::findClassFromName("System", "Void");
         builtinClasses.typeClass = Gluon::Classes::findClassFromName("System", "Type");
-
-        // TODO: defaults type map, avoiding an xref trace because pain
     }
 }
