@@ -81,7 +81,7 @@ target_sources(
 )
 
 add_subdirectory(capstone)
-target_include_directories(Gluon PRIVATE capstone/include)
+target_include_directories(Gluon PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/capstone/include)
 target_link_libraries(Gluon PRIVATE capstone)
 target_link_libraries(Gluon PRIVATE dbghelp)
 
