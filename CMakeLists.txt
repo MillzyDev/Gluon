@@ -83,5 +83,6 @@ target_sources(
 add_subdirectory(capstone)
 target_include_directories(Gluon PRIVATE capstone/include)
 target_link_libraries(Gluon PRIVATE capstone)
+target_link_libraries(Gluon PRIVATE dbghelp)
 
 target_compile_definitions(Gluon PRIVATE GLUON_EXPORT)
