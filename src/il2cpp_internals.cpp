@@ -9,6 +9,7 @@
 
 namespace Gluon {
     bool Il2CppInternals::initialised = false;
+    BuiltinClasses Il2CppInternals::builtinClasses;
 
     void Il2CppInternals::initialise() {
         if (initialised) {
@@ -16,7 +17,6 @@ namespace Gluon {
         }
         initialised = true;
 
-        std::memset(&builtinClasses, 0, sizeof(BuiltinClasses));
         builtinClasses.booleanClass = Gluon::Classes::findClassFromName("System", "Boolean");
         builtinClasses.byteClass = Gluon::Classes::findClassFromName("System", "Byte");
         builtinClasses.sByteClass = Gluon::Classes::findClassFromName("System", "SByte");
