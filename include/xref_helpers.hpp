@@ -34,7 +34,7 @@ namespace Gluon::XrefHelpers {
         size_t size = szBytes;
 
         while(size > 0) {
-            bool res = cs_disasm_iter(getCapstoneHandle(), &instructions, &sz, &ptr, insn);
+            bool res = cs_disasm_iter(getCapstoneHandle(), &instructions, &size, &ptr, insn);
             if (res) {
                 if (insn->id == X86_INS_RET) {
                     if (rCount == 0) {
