@@ -23,8 +23,8 @@ macro (RECURSE_FILES return_list filter)
     set(${return_list} ${file_list})
 endmacro ()
 
-if (EXISTS "${CMAKE_SOURCE_DIR}/../unity.cmake")
-    include(${CMAKE_SOURCE_DIR}/../unity.cmake)
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../unity.cmake")
+    include(${CMAKE_CURRENT_SOURCE_DIR}/../unity.cmake)
 else ()
     include(unity.cmake)
 endif ()
@@ -67,12 +67,12 @@ set_target_properties(
 
 target_include_directories(
         Gluon PUBLIC
-        "${CMAKE_SOURCE_DIR}/include"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
 RECURSE_FILES(
         gluon_sources
-        "${CMAKE_SOURCE_DIR}/src/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 )
 
 target_sources(
