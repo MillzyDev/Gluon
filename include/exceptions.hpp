@@ -5,8 +5,10 @@
 #include <format>
 #include <stdexcept>
 #include <string_view>
+#include <string>
 
 #include "backtrace_helpers.hpp"
+#include "classes.hpp"
 
 #include "il2cpp-class-internals.h"
 
@@ -41,9 +43,19 @@ namespace Gluon::Exceptions {
         const Il2CppClass *targetClass;
         Il2CppObject *instance;
 
-        // TODO
-        ///BadCastException(const Il2CppClass *klass, const Il2CppClass *targetClass, Il2CppObject *inst) : StackTraceException(std::format("Failed to cast {} to {}", )) {}
+        BadCastException(const Il2CppClass *klass, const Il2CppClass *targetClass, Il2CppObject *instance)
+        : StackTraceException(std::format("Failed to cast {} to {}", Gluon::Classes::getClassStandardName(klass, true),
+                                          Gluon::Classes::getClassStandardName(targetClass, true))),
+                                          klass(klass),
+                                          targetClass(targetClass),
+                                          instance(instance) {}
     };
+
+    GLUON_API std::string exceptionToString(const Il2CppException *exception) noexcept;
+
+    [[noreturn]] GLUON_API void raiseException(const Il2CppException *exception);
+
+
 }
 
 #endif
