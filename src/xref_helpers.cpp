@@ -10,7 +10,7 @@ namespace Gluon::XrefHelpers {
     static csh capstoneHandle;
     static bool valid;
 
-    void inititialiseCapstone() {
+    void initialiseCapstone() {
         cs_err csError = cs_open(CS_ARCH_X86, CS_MODE_64, &capstoneHandle);
         cs_option(capstoneHandle, CS_OPT_DETAIL, 1);
         if (csError) {
