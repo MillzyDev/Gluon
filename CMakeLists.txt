@@ -23,10 +23,10 @@ macro (RECURSE_FILES return_list filter)
     set(${return_list} ${file_list})
 endmacro ()
 
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../unity.cmake")
-    include(${CMAKE_CURRENT_SOURCE_DIR}/../unity.cmake)
+if (NOT EXISTS "${CMAKE_SOURCE_DIR}/unity.cmake")
+    include("${CMAKE_SOURCE_DIR}/unity.cmake")
 else ()
-    include(unity.cmake)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/unity.cmake")
 endif ()
 
 add_compile_definitions(
@@ -81,7 +81,7 @@ target_sources(
 )
 
 add_subdirectory(capstone)
-target_include_directories(Gluon PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/capstone/include)
+target_include_directories(Gluon PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/capstone/include)
 target_link_libraries(Gluon PRIVATE capstone)
 target_link_libraries(Gluon PRIVATE dbghelp)
 
