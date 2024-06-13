@@ -46,17 +46,17 @@ namespace Gluon::Exceptions {
 
                 // attempt to get dll name
                 std::string_view moduleName;
-                if (SymGetModuleInfo64(currentProcess, reinterpret_cast<uint64_t>(stackTraceBuffer[0]), moduleInfo)) {
+                if (SymGetModuleInfo64(currentProcess, reinterpret_cast<uint64_t>(stackTraceBuffer[i]), moduleInfo)) {
                     moduleName = std::string_view(moduleInfo->ImageName);
                 }
 
                 // if symbol name available, put it in the log.
                 if (symbolInfo->NameLen) {
                     std::string_view symbolName(symbolInfo->Name, symbolInfo->NameLen);
-                    Gluon::Logging::Logger::error("        #{:02}  PC {:016x}  {}  ({})\n", i, address, moduleName, symbolName);
+                    Gluon::Logging::Logger::error("        #{:02}  PC {:016x}  {}  ({})", i, address, moduleName, symbolName);
                 }
                 else {
-                    Gluon::Logging::Logger::error("        #{:02}  PC {:016x}  {}\n", i, address, moduleName);
+                    Gluon::Logging::Logger::error("        #{:02}  PC {:016x}  {}", i, address, moduleName);
                 }
 
                 std::free(moduleInfo);
