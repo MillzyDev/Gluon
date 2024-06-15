@@ -1,9 +1,12 @@
 #ifndef GLUON_IL2CPP_METHODS_HPP_
 #define GLUON_IL2CPP_METHODS_HPP_
 
+#include <string_view>
+
+#include "il2cpp_functions.hpp"
 #include "il2cpp-object-internals.h"
 
-namespace Gluon::Il2CppMethods {
+namespace Gluon::Methods {
     enum struct CreationType {
         /**
          * @brief C# object, able to be garbage collected.
@@ -34,6 +37,8 @@ namespace Gluon::Il2CppMethods {
      * @return The created instance.
      */
     Il2CppObject *createManualThrow(const Il2CppClass *klass);
+
+    const MethodInfo *findMethodUnsafe(const Il2CppClass *klass, std::string_view methodName, int argsCount);
 }
 
 #endif
