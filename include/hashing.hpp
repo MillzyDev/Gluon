@@ -14,6 +14,16 @@ namespace Gluon::Hashing {
             return hash1 ^ hash2;
         }
     };
+
+    class HashPair3 {
+    public:
+        template<class T1, class T2, class T3>
+        size_t operator()(const std::pair<T1, std::pair<T2, T3>> &pair) const {
+            auto hash1 = std::hash<T1>{}(pair.first);
+            auto hash2 = HashPair{}(pair.second);
+            return hash1 ^ hash2;
+        }
+    };
 }
 
 #endif
