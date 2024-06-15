@@ -1,5 +1,6 @@
 #include <windows.h>
 
+#include "abortion.hpp"
 #include "il2cpp_functions.hpp"
 
 #include "gluon_logging.hpp"
@@ -260,7 +261,8 @@ namespace Gluon {
         SetLastError(0);
         HMODULE il2cppAssembly = LoadLibraryA(kIl2CppAssembly);
         if (!il2cppAssembly) {
-            // TODO: Error Handling
+            Gluon::Logging::Logger::error("Unable to load IL2CPP main assembly. Will abort.");
+            SAFE_ABORT();
             return;
         }
 

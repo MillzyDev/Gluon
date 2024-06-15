@@ -3,6 +3,7 @@
 
 #include <type_traits>
 
+#include "abortion.hpp"
 #include "gluon_config.hpp"
 #include "il2cpp-api-types.h"
 #include "il2cpp-metadata.h"
@@ -13,7 +14,7 @@ static rt (*il2cpp_##name)__VA_ARGS__;          \
 template<class... TArgs>                        \
 static rt name(TArgs &&...args) {               \
     if (!il2cpp_##name) {                       \
-        /* TODO: abort */                       \
+        SAFE_ABORT();                           \
     }                                           \
     if constexpr (std::is_same_v<rt, void>) {   \
         il2cpp_##name(args...);                 \
