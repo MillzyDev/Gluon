@@ -5,6 +5,7 @@
 
 #include "exceptions.hpp"
 
+#include "abortion.hpp"
 #include "il2cpp_functions.hpp"
 #include "gluon_logging.hpp"
 
@@ -81,7 +82,7 @@ namespace Gluon::Exceptions {
     }
 
     [[noreturn]] void raiseException(const Il2CppException *exception) {
-        // TODO: CRASH_UNLESS
+        CRASH_UNLESS(exception);
         Gluon::Il2CppFunctions::raise_exception(const_cast<Il2CppException *>(exception));
         __builtin_unreachable();
     }
