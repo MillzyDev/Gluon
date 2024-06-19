@@ -1,5 +1,6 @@
 #include <map>
 #include <mutex>
+#include <shared_mutex>
 
 #include "methods.hpp"
 
@@ -45,15 +46,15 @@ namespace Gluon::Methods {
     }
 
     const MethodInfo *findMethodUnsafe(const Il2CppClass *klass, std::string_view methodName, int argsCount) {
+        // cache
+        static std::unordered_map<std::pair<const Il2CppClass *, std::pair<std::string, uint8_t>>, const MethodInfo *, Gluon::Hashing::HashPair3> unsafeMethodsCache;
+        static std::mutex unsafeMethodsCacheMutex;
+
         Gluon::Il2CppFunctions::initialise();
 
         if (!klass) {
             return nullptr;
         }
-
-        // cache
-        static std::unordered_map<std::pair<const Il2CppClass *, std::pair<std::string, uint8_t>>, const MethodInfo *, Gluon::Hashing::HashPair3> unsafeMethodsCache;
-        static std::mutex unsafeMethodsCacheMutex;
 
         // check cache
         auto innerPair = std::pair<std::string, uint8_t>(methodName, argsCount);
@@ -83,5 +84,17 @@ namespace Gluon::Methods {
         return methodInfo;
     }
 
+    const MethodInfo *findMethod(const FindMethodInfo &info) {
+        static std::unordered_map<FindMethodInfo, const MethodInfo *> methodsCache;
+        static std::shared_mutex methodsCacheMutex;
 
+        Gluon::Il2CppFunctions::initialise();
+        Il2CppClass *klass = info.klass;
+
+        if (!klass) {
+            return nullptr;
+        }
+
+        // TODO: oh god
+    }
 }
