@@ -1,9 +1,10 @@
 #include <windows.h>
 
-#include "abortion.hpp"
 #include "il2cpp_functions.hpp"
 
+#include "abortion.hpp"
 #include "gluon_logging.hpp"
+#include "xref_helpers.hpp"
 
 #define IL2CPP_INIT(rt, name, ...) rt(*Gluon::Il2CppFunctions::il2cpp_##name) __VA_ARGS__
 
@@ -246,10 +247,24 @@ IL2CPP_INIT(void, custom_attrs_free, (Il2CppCustomAttrInfo * ainfo));
 IL2CPP_INIT(void, class_set_userdata, (Il2CppClass * klass, void* userdata));
 IL2CPP_INIT(int, class_get_userdata_offset, ());
 IL2CPP_INIT(void, set_default_thread_affinity, (int64_t affinity_mask));
+
+IL2CPP_INIT(bool, Class_Init, (Il2CppClass *klass));
 #pragma endregion
 
 namespace Gluon {
     bool Il2CppFunctions::initialised;
+
+    uint32_t *traceClassInit() {
+        auto Array_NewSpecific_addr = Gluon::XrefHelpers::findNthJmp<1>(
+                reinterpret_cast<const uint32_t *>(Il2CppFunctions::il2cpp_array_new_specific));
+        Array_NewSpecific_addr.value();
+        auto match = Gluon::XrefHelpers::findNthCall<1>(Array_NewSpecific_addr.value());
+        if (!match) {
+            Gluon::Logging::Logger::error("Failed to find Class::Init. Will abort.");
+            SAFE_ABORT();
+        }
+        return match.value();
+    }
 
     void Il2CppFunctions::initialise() {
         constexpr const char *kIl2CppAssembly = "GameAssembly.dll";
@@ -498,6 +513,6 @@ namespace Gluon {
         IL2CPP_LOAD(class_set_userdata);
         IL2CPP_LOAD(class_get_userdata_offset);
 
-        // TODO: Any xref traces we might need later
+        Il2CppFunctions::il2cpp_Class_Init = reinterpret_cast<decltype(Il2CppFunctions::il2cpp_Class_Init)>(traceClassInit());
     }
 }

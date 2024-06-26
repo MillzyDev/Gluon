@@ -261,6 +261,8 @@ namespace Gluon {
         IL2CPP_FUNC(void, class_set_userdata, (Il2CppClass * klass, void* userdata));
         IL2CPP_FUNC(int, class_get_userdata_offset, ());
         IL2CPP_FUNC(void, set_default_thread_affinity, (int64_t affinity_mask));
+
+        IL2CPP_FUNC(bool, Class_Init, (Il2CppClass *klass));
 #pragma endregion
 
         static bool initialised;
