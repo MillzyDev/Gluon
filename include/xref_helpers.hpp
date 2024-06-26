@@ -136,7 +136,31 @@ namespace Gluon::XrefHelpers {
         return (decltype(match(insn)))std::nullopt;
     }
 
-    std::optional<uint32_t *> callConv(cs_insn *insn);
+    GLUON_API std::optional<uint32_t *> callConv(cs_insn *insn);
+
+    GLUON_API std::optional<uint32_t *> jmpConv(cs_insn *insn);
+
+    template<uint32_t nToRetOn, bool includeR = false, int retCount = -1, size_t szBytes = 4096>
+    requires (nToRetOn >= 1)
+    auto findNthCall(const uint32_t *address) {
+        if constexpr (includeR) {
+            return findNth<nToRetOn, retCount, szBytes>(address, &callConv, &insnMatch<X86_INS_CALL>);
+        }
+        else {
+            return findNth<nToRetOn, retCount, szBytes>(address, &callConv, &insnMatch<>);
+        }
+    }
+
+    template<uint32_t nToRetOn, bool includeR = false, int retCount = -1, size_t szBytes = 4096>
+    requires (nToRetOn >= 1)
+    auto findNthJmp(const uint32_t *address) {
+        if constexpr (includeR) {
+            return findNth<nToRetOn, retCount, szBytes>(address, &jmpConv, &insnMatch<X86_INS_JMP>);
+        }
+        else {
+            return findNth<nToRetOn, retCount, szBytes>(address, &jmpConv, &insnMatch<>);
+        }
+    }
 }
 
 #endif
