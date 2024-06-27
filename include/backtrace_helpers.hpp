@@ -17,7 +17,7 @@ namespace Gluon::BacktraceHelpers {
 
     GLUON_API _Unwind_Reason_Code unwindCallback(struct _Unwind_Context *context, void *arg);
     GLUON_API size_t captureBacktrace(void **buffer, uint16_t max, uint16_t skip = 0);
-    GLUON_API void *getBaseAddress(HANDLE module);
+    GLUON_API void *getBaseForAddress(const void *address);
 }
 
 #endif
