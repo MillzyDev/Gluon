@@ -1,6 +1,9 @@
 #include <cstdint>
 #include <unwind.h>
 
+#include <windows.h>
+#include <dbghelp.h>
+
 #include "backtrace_helpers.hpp"
 
 namespace Gluon::BacktraceHelpers {
@@ -28,5 +31,19 @@ namespace Gluon::BacktraceHelpers {
         _Unwind_Backtrace(unwindCallback, &state);
 
         return state.current - buffer;
+    }
+
+    void *getBaseForAddress(const void *address) {
+        static HANDLE currentProcess = nullptr;
+
+        if (!currentProcess) {
+            DWORD symOptions = SymGetOptions();
+            SymSetOptions(symOptions | SYMOPT_UNDNAME); // undecorated symbol names
+
+            currentProcess = GetCurrentProcess();
+            SymInitialize(currentProcess, nullptr, TRUE); // initialise for process and all modules
+        }
+
+        return reinterpret_cast<void *>(SymGetModuleBase64(currentProcess, reinterpret_cast<DWORD64>(address)));
     }
 }
