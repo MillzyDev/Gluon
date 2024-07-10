@@ -249,6 +249,15 @@ IL2CPP_INIT(int, class_get_userdata_offset, ());
 IL2CPP_INIT(void, set_default_thread_affinity, (int64_t affinity_mask));
 
 IL2CPP_INIT(bool, Class_Init, (Il2CppClass *klass));
+IL2CPP_INIT(Il2CppClass *, MetadataCache_GetTypeInfoFromHandle, (Il2CppMetadataTypeHandle handle));
+IL2CPP_INIT(Il2CppClass *, MetadataCache_GetTypeInfoFromTypeIndex, (TypeIndex index));
+IL2CPP_INIT(Il2CppClass *, GlobalMetadata_GetTypeInfoFromHandle, (TypeDefinitionIndex index));
+IL2CPP_INIT(Il2CppClass *, GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex, (TypeDefinitionIndex index));
+IL2CPP_INIT(std::string, Type_GetName, (const Il2CppType *type, Il2CppTypeNameFormat format));
+IL2CPP_INIT(Il2CppClass *, Class_FromIl2CppType, (Il2CppType *type));
+IL2CPP_INIT(Il2CppClass *, GenericClass_GetClass, (Il2CppGenericClass *genericClass));
+IL2CPP_INIT(Il2CppClass *, Class_GetPtrClass, (Il2CppClass *elementClass));
+IL2CPP_INIT(std::vector<const Il2CppAssembly *>, Assembly_GetAllAssemblies, ());
 #pragma endregion
 
 namespace Gluon {
@@ -264,6 +273,102 @@ namespace Gluon {
             SAFE_ABORT();
         }
         return match.value();
+    }
+
+    uint32_t *traceGetTypeInfoFromHandle() {
+        auto Image_GetType_addr = Gluon::XrefHelpers::findNthJmp<1>(reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_image_get_class));
+        if (!Image_GetType_addr) {
+            SAFE_ABORT_MSG("Failed to find Image::GetType!");
+        }
+
+        auto MetadataCache_GetTypeInfoFromHandle_addr = Gluon::XrefHelpers::findNthJmp<1>(*Image_GetType_addr);
+        if (!MetadataCache_GetTypeInfoFromHandle_addr) {
+            SAFE_ABORT_MSG("Failed to find MetadataCache::GetTypeInfoFromHandle!");
+        }
+
+        return MetadataCache_GetTypeInfoFromHandle_addr.value();
+    }
+
+    uint32_t *traceGetTypeInfoFromTypeIndex() {
+        // il2cpp_field_get_value_object // 1st JMP
+        //     Field::GetValueObjectForThread // 5th CALL
+        //         utils::BlobReader::GetConstrantValueFromBlob // 1st CALL
+        //             BlobReader::GetConstantValueFromBlob // 10th CALL
+        //                 MetadataCache::GetTypeInfoFromTypeIndex
+        auto Field_GetValueObjectForThread = Gluon::XrefHelpers::findNthJmp<1, false, -1, 1024>(reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_field_get_value_object));
+        if (!Field_GetValueObjectForThread) {
+            SAFE_ABORT_MSG("Failed to find Field::GetValueObjectForThread!");
+        }
+
+        auto BlobReader_GetConstantValueFromBlob = Gluon::XrefHelpers::findNthCall<5>(Field_GetValueObjectForThread.value());
+        if (!BlobReader_GetConstantValueFromBlob) {
+            SAFE_ABORT_MSG("Failed to find BlobReader::GetConstantValueFromBlob!");
+        }
+
+        auto BlobReader_GetConstantValueFromBlob2 = Gluon::XrefHelpers::findNthCall<1>(BlobReader_GetConstantValueFromBlob.value());
+        if (!BlobReader_GetConstantValueFromBlob2) {
+            SAFE_ABORT_MSG("Failed to find BlobReader::GetConstantValueFromBlob2!");
+        }
+
+        auto MetadataCache_GetTypeInfoFromTypeIndex = Gluon::XrefHelpers::findNthCall<10>(BlobReader_GetConstantValueFromBlob2.value());
+        if (!MetadataCache_GetTypeInfoFromTypeIndex) {
+            SAFE_ABORT_MSG("Failed to find MetadataCache::GetTypeInfoFromTypeIndex!");
+        }
+
+        return MetadataCache_GetTypeInfoFromTypeIndex.value();
+    }
+
+    uint32_t *traceGetTypeInfoFromTypeDefinitionIndex(uint32_t *getTypeInfoFromHandle2) {
+        auto GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex_addr = Gluon::XrefHelpers::findNthJmp<1>(getTypeInfoFromHandle2);
+        if (!GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex_addr) {
+            SAFE_ABORT_MSG("Failed to find GlobalMetadata::GetTypeInfoFromTypeDefinitionIndex!");
+        }
+
+        return GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex_addr.value();
+    }
+
+    uint32_t *traceTypeGetName() {
+        auto Type_GetName_addr = Gluon::XrefHelpers::findNthCall<1>(reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_type_get_assembly_qualified_name));
+        if (!Type_GetName_addr) {
+            SAFE_ABORT_MSG("Failed to find Type::GetName!");
+        }
+        return Type_GetName_addr.value();
+    }
+
+    uint32_t *traceClassFromIl2CppType() {
+        auto Class_FromIl2CppType_addr = Gluon::XrefHelpers::findNthJmp<1>(reinterpret_cast<uint32_t *>(Gluon::Il2CppFunctions::il2cpp_class_from_il2cpp_type));
+        if (!Class_FromIl2CppType_addr) {
+            SAFE_ABORT_MSG("Failed to find Class::FromIl2CppType");
+        }
+
+        return Class_FromIl2CppType_addr.value();
+    }
+
+    uint32_t *traceGenericClassGetClass(uint32_t *fromIl2CppType) {
+        auto GenericClass_GetClass_addr = Gluon::XrefHelpers::findNthJmp<25>(fromIl2CppType);
+        if (!GenericClass_GetClass_addr) {
+            SAFE_ABORT_MSG("Failed to find GenericClass:GetClass!");
+        }
+
+        return GenericClass_GetClass_addr.value();
+    }
+
+    uint32_t *traceClassGetPtrClass(uint32_t *fromIl2CppType) {
+        auto Class_GetPtrClass_addr = Gluon::XrefHelpers::findNthJmp<22>(fromIl2CppType);
+        if (!Class_GetPtrClass_addr) {
+            SAFE_ABORT_MSG("Failed to find Class::GetPtrClass!");
+        }
+
+        return Class_GetPtrClass_addr.value();
+    }
+
+    uint32_t *traceAssemblyGetAllAssemblies() {
+        auto Assembly_GetAllAssemblies_addr = Gluon::XrefHelpers::findNthCall<1>(reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_domain_get_assemblies));
+        if (!Assembly_GetAllAssemblies_addr) {
+            SAFE_ABORT_MSG("Failed to find Assembly::GetAllAssemblies!");
+        }
+
+        return Assembly_GetAllAssemblies_addr.value();
     }
 
     void Il2CppFunctions::initialise() {
@@ -513,6 +618,31 @@ namespace Gluon {
         IL2CPP_LOAD(class_set_userdata);
         IL2CPP_LOAD(class_get_userdata_offset);
 
-        Il2CppFunctions::il2cpp_Class_Init = reinterpret_cast<decltype(Il2CppFunctions::il2cpp_Class_Init)>(traceClassInit());
+        Il2CppFunctions::il2cpp_Class_Init =
+                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_Class_Init)>(traceClassInit());
+        Il2CppFunctions::il2cpp_MetadataCache_GetTypeInfoFromHandle =
+                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_MetadataCache_GetTypeInfoFromHandle)>(traceGetTypeInfoFromHandle());
+        Il2CppFunctions::il2cpp_MetadataCache_GetTypeInfoFromTypeIndex =
+                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_MetadataCache_GetTypeInfoFromTypeIndex)>(traceGetTypeInfoFromTypeIndex());
+        Il2CppFunctions::il2cpp_GlobalMetadata_GetTypeInfoFromHandle = // function inlined – preserving other value for compatibility purposes
+                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_GlobalMetadata_GetTypeInfoFromHandle)>(Il2CppFunctions::il2cpp_MetadataCache_GetTypeInfoFromHandle);
+        Il2CppFunctions::il2cpp_GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex =
+                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex)>(
+                        traceGetTypeInfoFromTypeDefinitionIndex(reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_GlobalMetadata_GetTypeInfoFromHandle))
+                        );
+        Il2CppFunctions::il2cpp_Type_GetName =
+                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_Type_GetName)>(traceTypeGetName());
+        Il2CppFunctions::il2cpp_Class_FromIl2CppType =
+                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_Class_FromIl2CppType)>(traceClassFromIl2CppType());
+        Il2CppFunctions::il2cpp_GenericClass_GetClass =
+                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_GenericClass_GetClass)>(
+                        traceGenericClassGetClass(reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_Class_FromIl2CppType))
+                        );
+        Il2CppFunctions::il2cpp_Class_GetPtrClass =
+                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_Class_GetPtrClass)>(
+                        traceClassGetPtrClass(reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_Class_FromIl2CppType))
+                        );
+        Il2CppFunctions::il2cpp_Assembly_GetAllAssemblies =
+                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_Assembly_GetAllAssemblies)>(traceAssemblyGetAllAssemblies());
     }
 }

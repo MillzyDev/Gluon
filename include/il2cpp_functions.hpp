@@ -262,7 +262,17 @@ namespace Gluon {
         IL2CPP_FUNC(int, class_get_userdata_offset, ());
         IL2CPP_FUNC(void, set_default_thread_affinity, (int64_t affinity_mask));
 
+        // non-API IL2CPP functions
         IL2CPP_FUNC(bool, Class_Init, (Il2CppClass *klass));
+        IL2CPP_FUNC(Il2CppClass *, MetadataCache_GetTypeInfoFromHandle, (Il2CppMetadataTypeHandle index));
+        IL2CPP_FUNC(Il2CppClass *, MetadataCache_GetTypeInfoFromTypeIndex, (TypeIndex index));
+        IL2CPP_FUNC(Il2CppClass *, GlobalMetadata_GetTypeInfoFromHandle, (TypeDefinitionIndex index));
+        IL2CPP_FUNC(Il2CppClass *, GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex, (TypeDefinitionIndex index));
+        IL2CPP_FUNC(std::string, Type_GetName, (const Il2CppType *type, Il2CppTypeNameFormat format));
+        IL2CPP_FUNC(Il2CppClass *, Class_FromIl2CppType, (Il2CppType *type));
+        IL2CPP_FUNC(Il2CppClass *, GenericClass_GetClass, (Il2CppGenericClass *genericClass));
+        IL2CPP_FUNC(Il2CppClass *, Class_GetPtrClass, (Il2CppClass *elementClass));
+        IL2CPP_FUNC(std::vector<const Il2CppAssembly  *>, Assembly_GetAllAssemblies, ());
 #pragma endregion
 
         static bool initialised;
