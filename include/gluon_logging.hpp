@@ -58,4 +58,8 @@ namespace Gluon::Logging {
     };
 }
 
+namespace Gluon {
+    typedef ::Gluon::Logging::Logger Logger;
+}
+
 #endif
