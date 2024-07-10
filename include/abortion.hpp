@@ -9,6 +9,7 @@
 
 #define CRASH_UNLESS(...) Gluon::crashUnless(__VA_ARGS__, __PRETTY_FUNCTION__, __FILE__, __LINE__)
 #define SAFE_ABORT() Gluon::safeAbort(__PRETTY_FUNCTION__, __FILE__, __LINE__)
+#define SAFE_ABORT_MSG(...) Gluon::safeAbortMsg(__PRETTY_FUNCTION__, __FILE__, __LINE__, __VA_ARGS__)
 
 namespace Gluon {
     template <class, template <class, class...> class>
@@ -22,6 +23,21 @@ namespace Gluon {
             usleep(100000); // 0.1s
             Gluon::Logging::Logger::warn("Aborting in {} at {}:{}", func, file, line);
         }
+        // TODO: move backtrace log to logging class
+        usleep(100000L); // 0.1s
+        std::terminate();
+    }
+
+    template<typename... TArgs>
+    [[noreturn]] inline void safeAbortMsg(const char *func, const char *file, int line, std::format_string<TArgs...> fmt, TArgs &&...args) {
+        for (int i = 0; i < 2; i++) {
+            usleep(100000L); // 0.1s
+            Gluon::Logger::warn("Aborting in {} at {}:{}", func, file, line);
+            Gluon::Logger::warn(fmt, std::forward<TArgs>(args)...);
+        }
+        // TODO: backtrace log
+        usleep(100000L); // 0.1s
+        std::terminate();
     }
 
     template<class TArg>
