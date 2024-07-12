@@ -24,6 +24,8 @@ namespace Gluon::Logging {
     public:
         static void setLoggerAdapter(std::unique_ptr<LoggerAdapter> implementation);
 
+        static void logBacktraceFull(void *const *stackTraceBuffer, uint16_t stackTraceSize);
+
         template<typename... TArgs>
         inline static void neutral(std::format_string<TArgs...> format, TArgs &&...args) {
             if (!Logger::loggerAdapterReceived) {
