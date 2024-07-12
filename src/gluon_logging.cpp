@@ -11,6 +11,7 @@ namespace Gluon::Logging {
     void LoggerAdapter::logInfo(const std::string &message) {}
     void LoggerAdapter::logWarn(const std::string &message) {}
     void LoggerAdapter::logError(const std::string &message) {}
+    void LoggerAdapter::flushStreams() {}
 
     bool Logger::loggerAdapterReceived = false;
     std::unique_ptr<LoggerAdapter> Logger::loggerAdapter = nullptr;
@@ -31,9 +32,9 @@ namespace Gluon::Logging {
             SymInitialize(currentProcess, nullptr, TRUE); // initialise for process and all modules
         }
 
-        Gluon::Logging::Logger::error("[UNCAUGHT EXCEPTION] Logging backtrace for RunMethodException with size: {}...", stackTraceSize);
-        Gluon::Logging::Logger::error("[UNCAUGHT EXCEPTION]  *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***");
-        Gluon::Logging::Logger::error("[UNCAUGHT EXCEPTION] Process ID: {} Thread ID: {}", GetCurrentProcessId(), GetCurrentThreadId());
+        Gluon::Logging::Logger::error("[BACKTRACE BEGIN] Logging backtrace with size: {}...", stackTraceSize);
+        Gluon::Logging::Logger::error("[BACKTRACE BEGIN]  *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***");
+        Gluon::Logging::Logger::error("[BACKTRACE BEGIN] Process ID: {} Thread ID: {}", GetCurrentProcessId(), GetCurrentThreadId());
 
         for (uint16_t i = 0; i < stackTraceSize; i++) {
             constexpr std::size_t kSymbolInfoSize = sizeof(SYMBOL_INFO);
