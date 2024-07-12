@@ -345,9 +345,9 @@ namespace Gluon {
     }
 
     uint32_t *traceGenericClassGetClass(uint32_t *fromIl2CppType) {
-        auto GenericClass_GetClass_addr = Gluon::XrefHelpers::findNthJmp<25>(fromIl2CppType);
+        auto GenericClass_GetClass_addr = Gluon::XrefHelpers::findNthJmp<25, true>(fromIl2CppType);
         if (!GenericClass_GetClass_addr) {
-            SAFE_ABORT_MSG("Failed to find GenericClass:GetClass!");
+            SAFE_ABORT_MSG("Failed to find GenericClass::GetClass!");
         }
 
         return GenericClass_GetClass_addr.value();
@@ -383,7 +383,6 @@ namespace Gluon {
         if (!il2cppAssembly) {
             Gluon::Logging::Logger::error("Unable to load IL2CPP main assembly. Will abort.");
             SAFE_ABORT();
-            return;
         }
 
         IL2CPP_LOAD(init);
