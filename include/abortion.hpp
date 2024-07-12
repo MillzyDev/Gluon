@@ -5,6 +5,7 @@
 #include <type_traits>
 #include <unistd.h>
 
+#include "backtrace_helpers.hpp"
 #include "gluon_logging.hpp"
 
 #define CRASH_UNLESS(...) Gluon::crashUnless(__VA_ARGS__, __PRETTY_FUNCTION__, __FILE__, __LINE__)
@@ -18,12 +19,21 @@ namespace Gluon {
     template <class...Ts, template <class, class...> class U>
     struct IsInstance<U<Ts...>, U> : public std::true_type {};
 
+    inline void logBacktrace() {
+        constexpr uint16_t kStackTraceMaxSize = 256;
+        void *stackTraceBuffer[kStackTraceMaxSize];
+        uint16_t stackTraceSize;
+        stackTraceSize = Gluon::BacktraceHelpers::captureBacktrace(stackTraceBuffer, kStackTraceMaxSize);
+        Gluon::Logger::logBacktraceFull(stackTraceBuffer, stackTraceSize);
+    }
+
     [[noreturn]] inline void safeAbort(const char *func, const char *file, int line, uint16_t frameCount = 512) {
         for (int i = 0; i < 2; i++) {
             usleep(100000); // 0.1s
             Gluon::Logging::Logger::warn("Aborting in {} at {}:{}", func, file, line);
         }
-        // TODO: move backtrace log to logging class
+        logBacktrace();
+        // TODO: flush the log and make sure it saves
         usleep(100000L); // 0.1s
         std::terminate();
     }
@@ -35,7 +45,8 @@ namespace Gluon {
             Gluon::Logger::warn("Aborting in {} at {}:{}", func, file, line);
             Gluon::Logger::warn(fmt, std::forward<TArgs>(args)...);
         }
-        // TODO: backtrace log
+        logBacktrace();
+        // TODO: flush the log and make sure it saves
         usleep(100000L); // 0.1s
         std::terminate();
     }
