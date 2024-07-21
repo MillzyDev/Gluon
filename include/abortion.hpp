@@ -33,7 +33,7 @@ namespace Gluon {
             Gluon::Logging::Logger::warn("Aborting in {} at {}:{}", func, file, line);
         }
         logBacktrace();
-        // TODO: flush the log and make sure it saves
+        Gluon::Logger::flush();
         usleep(100000L); // 0.1s
         std::terminate();
     }
@@ -46,7 +46,7 @@ namespace Gluon {
             Gluon::Logger::warn(fmt, std::forward<TArgs>(args)...);
         }
         logBacktrace();
-        // TODO: flush the log and make sure it saves
+        Gluon::Logger::flush();
         usleep(100000L); // 0.1s
         std::terminate();
     }
