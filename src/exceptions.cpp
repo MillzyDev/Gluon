@@ -1,8 +1,3 @@
-#include <utility>
-
-#include <windows.h>
-#include <dbghelp.h>
-
 #include "exceptions.hpp"
 
 #include "abortion.hpp"
