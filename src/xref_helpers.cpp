@@ -56,14 +56,14 @@ namespace Gluon::XrefHelpers {
     
     std::optional<uint32_t *> leaConv(cs_insn *insn) {
         if (insn->id == X86_INS_LEA) {
-            cs_x86_op op = insn->detail->x86.operands[0];
+            cs_x86_op op = insn->detail->x86.operands[1];
+
             switch (op.type) {
                 case X86_OP_MEM:
                     if (op.mem.base != X86_REG_RIP) {
                         Gluon::Logger::warn("Unable to get effective address; not rip relative.");
                         break;
                     }
-                    Gluon::Logger::info("Disassembled rip-relative displacement: 0x{:x}", op.mem.disp);
                     return reinterpret_cast<uint32_t *>(insn->address + insn->size + op.mem.disp);
                 default:
                     Gluon::Logger::warn("Unable to get effective address for non-memory operand.");
