@@ -5,9 +5,11 @@
 
 #include "abortion.hpp"
 #include "gluon_config.hpp"
+
 #include "il2cpp-api-types.h"
 #include "il2cpp-metadata.h"
 #include "il2cpp-class-internals.h"
+#include "vm/GlobalMetadataFileInternals.h"
 
 #define IL2CPP_FUNC(rt, name, ...)              \
 static rt (*il2cpp_##name)__VA_ARGS__;          \
@@ -274,6 +276,23 @@ namespace Gluon {
         IL2CPP_FUNC(Il2CppClass *, Class_GetPtrClass, (Il2CppClass *elementClass));
         IL2CPP_FUNC(std::vector<const Il2CppAssembly  *>, Assembly_GetAllAssemblies, ());
 #pragma endregion
+
+        /*
+        // Copies of frequenctly inlined non-api libil2cpp functions:
+        static const char* MetadataCache_GetStringFromIndex(StringIndex index);
+        static const Il2CppTypeDefinition* MetadataCache_GetTypeDefinitionFromIndex(TypeDefinitionIndex index);
+        static TypeDefinitionIndex MetadataCache_GetExportedTypeFromIndex(TypeDefinitionIndex index);
+        static const Il2CppGenericContainer* MetadataCache_GetGenericContainerFromIndex(GenericContainerIndex index);
+        static const Il2CppGenericParameter* MetadataCache_GetGenericParameterFromIndex(GenericParameterIndex index);
+        static Il2CppClass* MetadataCache_GetNestedTypeFromIndex(NestedTypeIndex index);
+        static TypeDefinitionIndex MetadataCache_GetIndexForTypeDefinition(const Il2CppClass* typeDefinition);
+        static TypeDefinitionIndex MetadataCache_GetIndexForTypeDefinition(const Il2CppTypeDefinition* typeDefinition);
+        static GenericParameterIndex MetadataCache_GetGenericParameterIndexFromParameter(Il2CppMetadataGenericParameterHandle handle);
+        static const Il2CppTypeDefinition* MetadataCache_GetTypeDefinition(Il2CppClass* klass);
+        static GenericParameterIndex MetadataCache_GetGenericContainerIndex(Il2CppClass* klass);
+        */
+
+        static Il2CppDefaults *il2cppDefaults;
 
         static bool initialised;
         static void initialise();
