@@ -319,7 +319,8 @@ namespace Gluon {
         return MetadataCache_GetTypeInfoFromTypeIndex.value();
     }
 
-    uint32_t *traceGetTypeInfoFromTypeDefinitionIndex(uint32_t *getTypeInfoFromHandle2) {
+    uint32_t *traceGetTypeInfoFromTypeDefinitionIndex() {
+        uint32_t *getTypeInfoFromHandle2 = reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_GlobalMetadata_GetTypeInfoFromHandle);
         auto GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex_addr = Gluon::XrefHelpers::findNthJmp<1>(getTypeInfoFromHandle2);
         if (!GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex_addr) {
             SAFE_ABORT_MSG("Failed to find GlobalMetadata::GetTypeInfoFromTypeDefinitionIndex!");
@@ -345,7 +346,8 @@ namespace Gluon {
         return Class_FromIl2CppType_addr.value();
     }
 
-    uint32_t *traceGenericClassGetClass(uint32_t *fromIl2CppType) {
+    uint32_t *traceGenericClassGetClass() {
+        uint32_t *fromIl2CppType = reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_Class_FromIl2CppType);
         auto GenericClass_GetClass_addr = Gluon::XrefHelpers::findNthJmp<25, true>(fromIl2CppType);
         if (!GenericClass_GetClass_addr) {
             SAFE_ABORT_MSG("Failed to find GenericClass::GetClass!");
@@ -354,7 +356,8 @@ namespace Gluon {
         return GenericClass_GetClass_addr.value();
     }
 
-    uint32_t *traceClassGetPtrClass(uint32_t *fromIl2CppType) {
+    uint32_t *traceClassGetPtrClass() {
+        uint32_t *fromIl2CppType = reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_Class_FromIl2CppType);
         auto Class_GetPtrClass_addr = Gluon::XrefHelpers::findNthJmp<22>(fromIl2CppType);
         if (!Class_GetPtrClass_addr) {
             SAFE_ABORT_MSG("Failed to find Class::GetPtrClass!");
@@ -382,21 +385,15 @@ namespace Gluon {
         Il2CppFunctions::il2cpp_GlobalMetadata_GetTypeInfoFromHandle = // function inlined – preserving other value for compatibility purposes
                 reinterpret_cast<decltype(Il2CppFunctions::il2cpp_GlobalMetadata_GetTypeInfoFromHandle)>(Il2CppFunctions::il2cpp_MetadataCache_GetTypeInfoFromHandle);
         Il2CppFunctions::il2cpp_GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex =
-                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex)>(
-                        traceGetTypeInfoFromTypeDefinitionIndex(reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_GlobalMetadata_GetTypeInfoFromHandle))
-                );
+                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex)>(traceGetTypeInfoFromTypeDefinitionIndex());
         Il2CppFunctions::il2cpp_Type_GetName =
                 reinterpret_cast<decltype(Il2CppFunctions::il2cpp_Type_GetName)>(traceTypeGetName());
         Il2CppFunctions::il2cpp_Class_FromIl2CppType =
                 reinterpret_cast<decltype(Il2CppFunctions::il2cpp_Class_FromIl2CppType)>(traceClassFromIl2CppType());
         Il2CppFunctions::il2cpp_GenericClass_GetClass =
-                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_GenericClass_GetClass)>(
-                        traceGenericClassGetClass(reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_Class_FromIl2CppType))
-                );
+                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_GenericClass_GetClass)>(traceGenericClassGetClass());
         Il2CppFunctions::il2cpp_Class_GetPtrClass =
-                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_Class_GetPtrClass)>(
-                        traceClassGetPtrClass(reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_Class_FromIl2CppType))
-                );
+                reinterpret_cast<decltype(Il2CppFunctions::il2cpp_Class_GetPtrClass)>(traceClassGetPtrClass());
         Il2CppFunctions::il2cpp_Assembly_GetAllAssemblies =
                 reinterpret_cast<decltype(Il2CppFunctions::il2cpp_Assembly_GetAllAssemblies)>(traceAssemblyGetAllAssemblies());
     }
@@ -412,6 +409,24 @@ namespace Gluon {
             SAFE_ABORT_MSG("Failed to find effective address for defaults!");
         }
         Il2CppFunctions::il2cppDefaults = reinterpret_cast<Il2CppDefaults *>(address.value());
+    }
+
+    uint32_t *traceGlobalMetadataHeader() {
+        // TODO
+    }
+
+    uint32_t *traceGlobalMetadataRegistration() {
+        // TODO
+    }
+
+    uint32_t *traceGlobalMetadata() {
+        // TODO
+    }
+
+    void traceMetadata() {
+        //traceGlobalMetadataHeader();
+        //traceGlobalMetadataRegistration();
+        //traceGlobalMetadata();
     }
 
     void Il2CppFunctions::initialise() {
@@ -662,6 +677,6 @@ namespace Gluon {
 
         traceAllFunctions();
         traceDefaults();
-        //Gluon::Logger::info("String Class Name: {}", il2cppDefaults->string_class->name);
+
     }
 }
