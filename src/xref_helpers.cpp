@@ -61,13 +61,33 @@ namespace Gluon::XrefHelpers {
             switch (op.type) {
                 case X86_OP_MEM:
                     if (op.mem.base != X86_REG_RIP) {
-                        Gluon::Logger::warn("Unable to get effective address; not rip relative.");
+                        Gluon::Logger::warn("Unable to get effective address; not rip-relative.");
                         break;
                     }
                     return reinterpret_cast<uint32_t *>(insn->address + insn->size + op.mem.disp);
                 default:
                     Gluon::Logger::warn("Unable to get effective address for non-memory operand.");
                     break;
+            }
+        }
+        return std::nullopt;
+    }
+
+    std::optional<uint32_t *> movConv(cs_insn *insn) {
+        if (insn->id == X86_INS_MOV) {
+            cs_x86_op op = insn->detail->x86.operands[1];
+
+            switch (op.type) {
+                case X86_OP_MEM:
+                    if (op.mem.base != X86_REG_RIP) {
+                        Gluon::Logger::warn("Unable to get address of source operand; not rip-relative.");
+                        break;
+                    }
+                    return reinterpret_cast<uint32_t *>(insn->address + insn->size + op.mem.disp); // calculate address
+                case X86_OP_IMM:
+                    return reinterpret_cast<uint32_t *>(op.imm); // get address from immediate
+                default:
+                    Gluon::Logger::warn("Unable to get address of source operand; is not rip-relative address nor immediate.");
             }
         }
         return std::nullopt;

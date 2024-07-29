@@ -142,6 +142,8 @@ namespace Gluon::XrefHelpers {
 
     GLUON_API std::optional<uint32_t *> leaConv(cs_insn *insn);
 
+    GLUON_API std::optional<uint32_t *> movConv(cs_insn *insn);
+
     template<uint32_t nToRetOn, bool includeR = false, int retCount = -1, size_t szBytes = 4096>
     requires (nToRetOn >= 1)
     auto findNthCall(const uint32_t *address) {
@@ -172,6 +174,17 @@ namespace Gluon::XrefHelpers {
         }
         else {
             return findNth<nToRetOn, retCount, szBytes>(address, &leaConv, &insnMatch<>);
+        }
+    }
+
+    template<uint32_t nToRetOn, bool includeR = false, int retCount = -1, size_t  szBytes = 4096>
+    requires (nToRetOn >= 1)
+    auto findNthMov(const uint32_t *address) {
+        if constexpr (includeR) {
+            return findNth<nToRetOn, retCount, szBytes>(address, &movConv, &insnMatch<X86_INS_MOV>);
+        }
+        else {
+            return findNth<nToRetOn, retCount, szBytes>(address, &movConv, &insnMatch<>);
         }
     }
 }
