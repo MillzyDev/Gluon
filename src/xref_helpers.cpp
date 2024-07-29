@@ -80,14 +80,14 @@ namespace Gluon::XrefHelpers {
             switch (op.type) {
                 case X86_OP_MEM:
                     if (op.mem.base != X86_REG_RIP) {
-                        Gluon::Logger::warn("Unable to get address of source operand; not rip-relative.");
+                        Gluon::Logger::warn("Unable to get address of MOV source operand; not rip-relative.");
                         break;
                     }
                     return reinterpret_cast<uint32_t *>(insn->address + insn->size + op.mem.disp); // calculate address
                 case X86_OP_IMM:
                     return reinterpret_cast<uint32_t *>(op.imm); // get address from immediate
                 default:
-                    Gluon::Logger::warn("Unable to get address of source operand; is not rip-relative address nor immediate.");
+                    Gluon::Logger::warn("Unable to get address of source MOV operand; is not rip-relative address nor immediate.");
             }
         }
         return std::nullopt;
