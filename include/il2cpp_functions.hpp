@@ -270,6 +270,7 @@ namespace Gluon {
         IL2CPP_FUNC(Il2CppClass *, MetadataCache_GetTypeInfoFromTypeIndex, (TypeIndex index));
         IL2CPP_FUNC(Il2CppClass *, GlobalMetadata_GetTypeInfoFromHandle, (TypeDefinitionIndex index));
         IL2CPP_FUNC(Il2CppClass *, GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex, (TypeDefinitionIndex index));
+        IL2CPP_FUNC(Il2CppClass *, FromTypeDefinition, (TypeDefinitionIndex index));
         IL2CPP_FUNC(std::string, Type_GetName, (const Il2CppType *type, Il2CppTypeNameFormat format));
         IL2CPP_FUNC(Il2CppClass *, Class_FromIl2CppType, (Il2CppType *type));
         IL2CPP_FUNC(Il2CppClass *, GenericClass_GetClass, (Il2CppGenericClass *genericClass));
@@ -293,6 +294,10 @@ namespace Gluon {
         */
 
         static Il2CppDefaults *il2cppDefaults;
+
+        static Il2CppMetadataRegistration **il2cppMetadataRegistrationPtr;
+        static void **globalMetadataPtr;
+        static Il2CppGlobalMetadataHeader **globalMetadataHeaderPtr;
 
         static bool initialised;
         static void initialise();
