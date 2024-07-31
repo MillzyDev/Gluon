@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <psapi.h>
 
 #include "il2cpp_functions.hpp"
 
@@ -265,9 +266,20 @@ namespace Gluon {
     bool Il2CppFunctions::initialised;
     Il2CppDefaults *Il2CppFunctions::il2cppDefaults;
 
-    Il2CppMetadataRegistration **Il2CppFunctions::il2cppMetadataRegistrationPtr;
-    void **Il2CppFunctions::globalMetadataPtr;
-    Il2CppGlobalMetadataHeader **Il2CppFunctions::globalMetadataHeaderPtr;
+    Il2CppMetadataRegistration *Il2CppFunctions::il2cppMetadataRegistrationPtr;
+    void *Il2CppFunctions::globalMetadataPtr;
+    Il2CppGlobalMetadataHeader *Il2CppFunctions::globalMetadataHeaderPtr;
+
+    uint64_t getOffsetFromPtr(uint32_t *ptr) {
+        HANDLE main = GetCurrentProcess();
+        HMODULE gameAssembly = GetModuleHandleA("GameAssembly.dll");
+
+        MODULEINFO moduleInfo;
+        GetModuleInformation(main, gameAssembly, &moduleInfo, sizeof(moduleInfo));
+
+        uint32_t *base = static_cast<uint32_t *>(moduleInfo.lpBaseOfDll);
+        return ptr - base;
+    }
 
     uint32_t *traceClassInit() {
         auto Array_NewSpecific_addr = Gluon::XrefHelpers::findNthJmp<1>(
@@ -278,6 +290,9 @@ namespace Gluon {
             Gluon::Logging::Logger::error("Failed to find Class::Init. Will abort.");
             SAFE_ABORT();
         }
+
+        Gluon::Logger::info("Class::Init offset: {:0x}", getOffsetFromPtr(match.value()));
+
         return match.value();
     }
 
@@ -287,7 +302,7 @@ namespace Gluon {
             SAFE_ABORT_MSG("Failed to find Image::GetType!");
         }
 
-        auto MetadataCache_GetTypeInfoFromHandle_addr = Gluon::XrefHelpers::findNthJmp<1>(*Image_GetType_addr);
+        auto MetadataCache_GetTypeInfoFromHandle_addr = Gluon::XrefHelpers::findNthJmp<1>(Image_GetType_addr.value());
         if (!MetadataCache_GetTypeInfoFromHandle_addr) {
             SAFE_ABORT_MSG("Failed to find MetadataCache::GetTypeInfoFromHandle!");
         }
@@ -468,9 +483,9 @@ namespace Gluon {
     }
 
     void traceMetadata() {
-        Il2CppFunctions::globalMetadataHeaderPtr = reinterpret_cast<Il2CppGlobalMetadataHeader **>(traceGlobalMetadataHeader());
-        Il2CppFunctions::il2cppMetadataRegistrationPtr = reinterpret_cast<Il2CppMetadataRegistration **>(traceIl2CppMetadataRegistration());
-        Il2CppFunctions::globalMetadataPtr = reinterpret_cast<void **>(traceGlobalMetadata());
+        Il2CppFunctions::globalMetadataHeaderPtr = reinterpret_cast<Il2CppGlobalMetadataHeader *>(traceGlobalMetadataHeader());
+        Il2CppFunctions::il2cppMetadataRegistrationPtr = reinterpret_cast<Il2CppMetadataRegistration *>(traceIl2CppMetadataRegistration());
+        Il2CppFunctions::globalMetadataPtr = reinterpret_cast<void *>(traceGlobalMetadata());
     }
 
     void Il2CppFunctions::initialise() {

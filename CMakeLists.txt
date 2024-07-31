@@ -80,9 +80,12 @@ target_sources(
         ${gluon_sources}
 )
 
+message(STATUS "PROCESSOR ${CMAKE_SYSTEM_PROCESSOR}")
+
 add_subdirectory(capstone)
 target_include_directories(Gluon PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/capstone/include)
 target_link_libraries(Gluon PRIVATE capstone)
 target_link_libraries(Gluon PRIVATE dbghelp)
+target_link_libraries(Gluon PRIVATE psapi)
 
 target_compile_definitions(Gluon PRIVATE GLUON_EXPORT)
