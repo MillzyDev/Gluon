@@ -352,7 +352,7 @@ namespace Gluon {
     uint32_t *traceFromTypeDefinition() {
         // GetTypeInfoFromTypeDefinitionIndex
         //     FromTypeDefinition 2nd Call
-        auto fromTypeDefinition_addr = Gluon::XrefHelpers::findNthCall<2>(
+        auto fromTypeDefinition_addr = Gluon::XrefHelpers::findNthCall<3>(
                         reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex)
                         );
         if (!fromTypeDefinition_addr) {
