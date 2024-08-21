@@ -83,6 +83,8 @@ namespace Gluon::XrefHelpers {
                         Gluon::Logger::warn("Unable to get address of MOV source operand; not rip-relative.");
                         break;
                     }
+                    Gluon::Logger::info("Bytes: {:x} {:x} {:x} {:x} {:x} {:x} {:x}", insn->bytes[0], insn->bytes[1], insn->bytes[2], insn->bytes[3], insn->bytes[4], insn->bytes[5], insn->bytes[6]);
+                    Gluon::Logger::info("Displacement: {:x}", op.mem.disp);
                     return reinterpret_cast<uint32_t *>(insn->address + insn->size + op.mem.disp); // calculate address
                 case X86_OP_IMM:
                     return reinterpret_cast<uint32_t *>(op.imm); // get address from immediate

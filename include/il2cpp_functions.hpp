@@ -295,9 +295,9 @@ namespace Gluon {
 
         static Il2CppDefaults *il2cppDefaults;
 
-        static Il2CppMetadataRegistration *il2cppMetadataRegistrationPtr;
-        static void *globalMetadataPtr;
-        static Il2CppGlobalMetadataHeader *globalMetadataHeaderPtr;
+        static Il2CppMetadataRegistration **il2cppMetadataRegistrationPtr;
+        static void **globalMetadataPtr;
+        static Il2CppGlobalMetadataHeader **globalMetadataHeaderPtr;
 
         static bool initialised;
         static void initialise();

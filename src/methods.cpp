@@ -85,6 +85,7 @@ namespace Gluon::Methods {
     }
 
     const MethodInfo *findMethod(const FindMethodInfo &info) {
+        // TODO
         static std::unordered_map<FindMethodInfo, const MethodInfo *> methodsCache;
         static std::shared_mutex methodsCacheMutex;
 
@@ -95,6 +96,32 @@ namespace Gluon::Methods {
             return nullptr;
         }
 
-        // TODO: oh god
+        // check cache
+        std::shared_lock lock(methodsCacheMutex);
+        auto it = methodsCache.find(info);
+        if (it != methodsCache.end()) {
+            return it->second;
+        }
+
+        std::vector<const MethodInfo *> matches;
+        matches.reserve(1);
+
+        const MethodInfo *target = nullptr;
+
+        auto addMethodsToMatches = [&](Il2CppClass *targetKlass) {
+            if (!targetKlass->initialized_and_no_error) {
+                Gluon::Il2CppFunctions::Class_Init(targetKlass);
+            }
+
+            auto const methods = std::span(targetKlass->methods, targetKlass->method_count);
+            for (auto const &current : methods) {
+                if (info.name != current->name) {
+                    continue;
+                }
+
+                bool isPerfect;
+                //if (!)
+            }
+        };
     }
 }
