@@ -362,8 +362,8 @@ namespace Gluon {
         // GetTypeInfoFromTypeDefinitionIndex
         //     FromTypeDefinition 2nd Call
         auto fromTypeDefinition_addr = Gluon::XrefHelpers::findNthCall<3, true>(
-                        reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex)
-                        );
+                reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex)
+        );
         if (!fromTypeDefinition_addr) {
             SAFE_ABORT_MSG("Failed to find FromTypeDefinition!");
         }
@@ -471,9 +471,9 @@ namespace Gluon {
         // GetTypeInfoFromTypeDefinitionIndex
         //     FromTypeDefinition
         //         7th MOV
-        auto il2cppMetadataRegistration_addr = Gluon::XrefHelpers::findNthMov<7>(reinterpret_cast<const uint32_t *>(Il2CppFunctions::il2cpp_FromTypeDefinition));
+        auto il2cppMetadataRegistration_addr = Gluon::XrefHelpers::findNthMov<7, true>(reinterpret_cast<const uint32_t *>(Il2CppFunctions::il2cpp_FromTypeDefinition));
         if (!il2cppMetadataRegistration_addr) {
-            SAFE_ABORT_MSG("Failed to find s_GlobalMetadataHeader!");
+            SAFE_ABORT_MSG("Failed to find s_GlobalMetadata!");
         }
 
         return il2cppMetadataRegistration_addr.value();
@@ -483,7 +483,7 @@ namespace Gluon {
         // GetTypeInfoFromTypeDefinitionIndex
         //     FromTypeDefinition
         //         20th MOV
-        auto globalMetadata_addr = Gluon::XrefHelpers::findNthMov<20>(reinterpret_cast<const uint32_t *>(Il2CppFunctions::il2cpp_FromTypeDefinition));
+        auto globalMetadata_addr = Gluon::XrefHelpers::findNthMov<19, true>(reinterpret_cast<const uint32_t *>(Il2CppFunctions::il2cpp_FromTypeDefinition));
         if (!globalMetadata_addr) {
             SAFE_ABORT_MSG("Failed to find s_GlobalMetadataHeader!");
         }
