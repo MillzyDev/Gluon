@@ -747,4 +747,109 @@ namespace Gluon {
         traceDefaults();
         traceMetadata();
     }
+
+    const char *Il2CppFunctions::MetadataCache_GetStringFromIndex(StringIndex index) {
+        checkGlobalMetadata();
+        IL2CPP_ASSERT(index <= globalMetadataHeader->stringSize);
+        const char *strings = (reinterpret_cast<const char *>(globalMetadata) + globalMetadataHeader->stringOffset) + index;
+        return strings;
+    }
+
+    const Il2CppTypeDefinition *Il2CppFunctions::MetadataCache_GetTypeDefinitionFromIndex(TypeDefinitionIndex index) {
+        checkGlobalMetadata();
+
+        if (index == kTypeDefinitionIndexInvalid) {
+            return nullptr;
+        }
+
+        IL2CPP_ASSERT(index >= 0 && static_cast<uint32_t>(index) < globalMetadataHeader->typeDefinitionsSize / sizeof(Il2CppTypeDefinition));
+        auto typeDefinitions = reinterpret_cast<const Il2CppTypeDefinition *>(reinterpret_cast<const char *>(globalMetadata) + globalMetadataHeader->typeDefinitionsOffset);
+        return typeDefinitions + index;
+    }
+
+    TypeDefinitionIndex Il2CppFunctions::MetadataCache_GetExportedTypeFromIndex(TypeDefinitionIndex index) {
+        checkGlobalMetadata();
+
+        if (index == kTypeDefinitionIndexInvalid) {
+            return kTypeDefinitionIndexInvalid;
+        }
+
+        IL2CPP_ASSERT(index >= 0 && static_cast<uint32_t>(index) < globalMetadataHeader->exportedTypeDefinitionsSize / sizeof(TypeDefinitionIndex));
+        auto exportedTypes = reinterpret_cast<TypeDefinitionIndex *>(reinterpret_cast<char *>(globalMetadata) + globalMetadataHeader->exportedTypeDefinitionsOffset);
+        return *(exportedTypes + index);
+    }
+
+    const Il2CppGenericContainer *
+    Il2CppFunctions::MetadataCache_GetGenericContainerFromIndex(GenericContainerIndex index) {
+        checkGlobalMetadata();
+
+        if (index == kGenericContainerIndexInvalid) {
+            return nullptr;
+        }
+
+        IL2CPP_ASSERT(index >= 0 && static_cast<uint32_t>(index) <= globalMetadataHeader->genericContainersSize / sizeof(Il2CppGenericContainer));
+        const Il2CppGenericContainer *genericContainers = reinterpret_cast<const Il2CppGenericContainer *>(reinterpret_cast<const char *>(globalMetadata) + globalMetadataHeader->genericContainersOffset);
+        return genericContainers + index;
+    }
+
+    const Il2CppGenericParameter *
+    Il2CppFunctions::MetadataCache_GetGenericParameterFromIndex(GenericParameterIndex index) {
+        checkGlobalMetadata();
+        if (index == kGenericParameterIndexInvalid) {
+            return nullptr;
+        }
+
+        IL2CPP_ASSERT(index >= 0 && static_cast<uint32_t>(index) <= globalMetadataHeader->genericParametersSize / sizeof(Il2CppGenericParameter));
+        const Il2CppGenericParameter* genericParameters = reinterpret_cast<const Il2CppGenericParameter *>(reinterpret_cast<const char *>(globalMetadata) + globalMetadataHeader->genericParametersOffset);
+        return genericParameters + index;
+    }
+
+    Il2CppClass *Il2CppFunctions::MetadataCache_GetNestedTypeFromIndex(NestedTypeIndex index) {
+        checkGlobalMetadata();
+
+        IL2CPP_ASSERT(index >= 0 && static_cast<uint32_t>(index) <= globalMetadataHeader->nestedTypesCount / sizeof(TypeDefinitionIndex));
+        auto nestedTypeIndices = reinterpret_cast<const TypeDefinitionIndex *>(reinterpret_cast<const char *>(globalMetadata) + globalMetadataHeader->nestedTypesOffset);
+
+        return GlobalMetadata_GetTypeInfoFromTypeDefinitionIndex(nestedTypeIndices[index]);
+    }
+
+    TypeDefinitionIndex Il2CppFunctions::MetadataCache_GetIndexForTypeDefinition(const Il2CppClass *klass) {
+        checkGlobalMetadata();
+        return MetadataCache_GetIndexForTypeDefinition(reinterpret_cast<const Il2CppTypeDefinition*>(klass->typeMetadataHandle));
+    }
+
+    TypeDefinitionIndex
+    Il2CppFunctions::MetadataCache_GetIndexForTypeDefinition(const Il2CppTypeDefinition *typeDefinition) {
+        checkGlobalMetadata();
+        IL2CPP_ASSERT(klass);
+        const Il2CppTypeDefinition* typeDefinitions = reinterpret_cast<const Il2CppTypeDefinition *>(reinterpret_cast<const char *>(globalMetadata) + globalMetadataHeader->typeDefinitionsOffset);
+
+        IL2CPP_ASSERT(typeDefinition->typeDefinition >= typeDefinitions && typeDefinition->typeDefinition < typeDefinitions + globalMetadataHeader->typeDefinitionsSize / sizeof(Il2CppTypeDefinition));
+        ptrdiff_t index = typeDefinition - typeDefinitions;
+        IL2CPP_ASSERT(index <= std::numeric_limits<TypeDefinitionIndex>::max());
+        return static_cast<TypeDefinitionIndex>(index);
+    }
+
+    GenericParameterIndex
+    Il2CppFunctions::MetadataCache_GetGenericParameterIndexFromParameter(Il2CppMetadataGenericParameterHandle handle) {
+        checkGlobalMetadata();
+        const Il2CppGenericParameter* genericParameter = reinterpret_cast<const Il2CppGenericParameter*>(handle);
+        const Il2CppGenericParameter* genericParameters = reinterpret_cast<const Il2CppGenericParameter*>(reinterpret_cast<const char *>(globalMetadata) + globalMetadataHeader->genericParametersOffset);
+
+        IL2CPP_ASSERT(genericParameter >= genericParameters && genericParameter < genericParameters + globalMetadataHeader->genericParametersSize / sizeof(Il2CppGenericParameter));
+
+        ptrdiff_t index = reinterpret_cast<Il2CppGenericParameter const*>(genericParameter) - reinterpret_cast<Il2CppGenericParameter const*>(genericParameters);
+        IL2CPP_ASSERT(index <= std::numeric_limits<GenericParameterIndex>::max());
+        return static_cast<GenericParameterIndex>(index);
+    }
+
+    const Il2CppTypeDefinition *Il2CppFunctions::MetadataCache_GetTypeDefinition(Il2CppClass *klass) {
+        checkGlobalMetadata();
+        return reinterpret_cast<const Il2CppTypeDefinition*>(klass->typeMetadataHandle);
+    }
+
+    GenericParameterIndex Il2CppFunctions::MetadataCache_GetGenericContainerIndex(Il2CppClass *klass) {
+        checkGlobalMetadata();
+        return MetadataCache_GetTypeDefinition(klass)->genericContainerIndex;
+    }
 }

@@ -278,7 +278,6 @@ namespace Gluon {
         IL2CPP_FUNC(std::vector<const Il2CppAssembly  *>, Assembly_GetAllAssemblies, ());
 #pragma endregion
 
-        /*
         // Copies of frequenctly inlined non-api libil2cpp functions:
         static const char* MetadataCache_GetStringFromIndex(StringIndex index);
         static const Il2CppTypeDefinition* MetadataCache_GetTypeDefinitionFromIndex(TypeDefinitionIndex index);
@@ -291,7 +290,6 @@ namespace Gluon {
         static GenericParameterIndex MetadataCache_GetGenericParameterIndexFromParameter(Il2CppMetadataGenericParameterHandle handle);
         static const Il2CppTypeDefinition* MetadataCache_GetTypeDefinition(Il2CppClass* klass);
         static GenericParameterIndex MetadataCache_GetGenericContainerIndex(Il2CppClass* klass);
-        */
 
         static Il2CppDefaults *il2cppDefaults;
 
@@ -299,8 +297,22 @@ namespace Gluon {
         static void **globalMetadataPtr;
         static Il2CppGlobalMetadataHeader **globalMetadataHeaderPtr;
 
+        static std::remove_pointer_t<decltype(il2cppMetadataRegistrationPtr)> il2cppMetadataRegistration;
+        static std::remove_pointer_t<decltype(globalMetadataPtr)> globalMetadata;
+        static std::remove_pointer_t<decltype(globalMetadataHeaderPtr)> globalMetadataHeader;
+
         static bool initialised;
         static void initialise();
+
+        static void checkGlobalMetadata() {
+            if (!globalMetadataHeader) {
+                il2cppMetadataRegistration = *CRASH_UNLESS(il2cppMetadataRegistrationPtr);
+                globalMetadata = *CRASH_UNLESS(globalMetadataPtr);
+                globalMetadataHeader = *CRASH_UNLESS(globalMetadataHeaderPtr);
+
+                CRASH_UNLESS(globalMetadataHeader->sanity == 0xFAB11BAF);
+            }
+        }
     };
 }
 
