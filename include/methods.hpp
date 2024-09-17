@@ -75,7 +75,7 @@ namespace Gluon::Methods {
      * @param klass The Il2CppClass to instantiate.
      * @return The created instance. Is nullptr if failed to create.
      */
-    Il2CppObject *createManual(const Il2CppClass *klass) noexcept;
+    GLUON_API Il2CppObject *createManual(const Il2CppClass *klass) noexcept;
 
     /**
      * @brief Creates a manual instance of the provided Il2CppClass *.
@@ -85,11 +85,13 @@ namespace Gluon::Methods {
      * @param klass The Il2CppClass to instantiate.
      * @return The created instance.
      */
-    Il2CppObject *createManualThrow(const Il2CppClass *klass);
+    GLUON_API Il2CppObject *createManualThrow(const Il2CppClass *klass);
 
-    const MethodInfo *findMethodUnsafe(const Il2CppClass *klass, std::string_view methodName, int argsCount);
+    GLUON_API const MethodInfo *findMethodUnsafe(const Il2CppClass *klass, std::string_view methodName, int argsCount);
 
-    const MethodInfo *findMethod(const FindMethodInfo &info);
+    GLUON_API const MethodInfo *findMethod(const FindMethodInfo &info);
+
+    GLUON_API bool isConvertibleFrom(const Il2CppType *to, const Il2CppType *from, bool asArgs = true);
 
     inline const Il2CppGenericContainer *getGenericContainer(const MethodInfo *method) {
         if (!method->is_generic) {
@@ -106,7 +108,6 @@ namespace Gluon::Methods {
         }
     }
 
-    // TODO
     template<size_t genericsSize, size_t argsSize>
     bool parameterMatch(const MethodInfo *method, const std::span<const Il2CppClass *const, genericsSize> genericTypes,
                         std::span<const Il2CppType* const, argsSize> const argTypes, std::optional<bool *> isIdenticalOut) {
@@ -148,9 +149,53 @@ namespace Gluon::Methods {
                     continue;
                 }
 
-                //auto genericIndex = Gluon::Il2CppFunctions::Metada
+                auto genericIndex = Gluon::Il2CppFunctions::MetadataCache_GetGenericParameterIndexFromParameter(paramType->data.genericParameterHandle) - genericContainer->genericParameterStart;
+
+                if (genericIndex < 0) {
+                    Gluon::Logger::warn("Extracted invalid genericIndex {} from parameter {}", genericIndex, i);
+                    continue;
+                }
+
+                if (genericIndex >= genericsCount) {
+                    Gluon::Logger::warn("parameterMatch was no supplied enough genericTypes to determine type of parameter {} "
+                                        "(had {}, needed {})!",
+                                        i, genericsCount, genericIndex);
+                    continue;
+                }
+
+                auto *klass = genericTypes[genericIndex];
+                paramType = (paramType->byref) ? &klass->this_arg : &klass->byval_arg;
+            }
+
+            // identical if every parameter matches exactly
+            isIdentical &= paramType == argTypes[i];
+
+            if (!isConvertibleFrom(paramType, argTypes[i])) {
+                matches = false;
+                break;
             }
         }
+
+        if (isIdenticalOut.has_value()) {
+            *isIdenticalOut.value() = isIdentical;
+        }
+
+        return matches;
+    }
+
+    template<size_t argsSize>
+    auto parameterMatch(const MethodInfo  *method, std::span<const Il2CppType *const, argsSize> const argTypes, std::optional<bool *> isIdenticalOut) {
+        return parameterMatch<0, argsSize>(method, std::span<const Il2CppClass *const, 0>(), argTypes, isIdenticalOut);
+    }
+
+    template<bool strictEqual = false, size_t genericsSize, size_t argsSize>
+    bool parameterMatch(const MethodInfo *method, std::array<const Il2CppClass *, genericsSize> const &genericTypes, std::array<const Il2CppType *, argsSize> const &argTypes, std::optional<bool *> isIdenticalOut) {
+        return parameterMatch<genericsSize, argsSize>(method, genericTypes, argTypes, isIdenticalOut);
+    }
+
+    template<bool strictEqual = false, size_t size>
+    bool parameterMatch(const MethodInfo *method, std::array<const Il2CppType *, size> const &argTypes, std::optional<bool *> isIdenticalOut) {
+        return parameterMatch<0, size>(method, std::span<const Il2CppClass *const, 0>(), argTypes, isIdenticalOut);
     }
 }
 
