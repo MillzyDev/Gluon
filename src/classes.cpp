@@ -12,7 +12,6 @@
 #include "gluon_logging.hpp"
 #include "hashing.hpp"
 #include "il2cpp_functions.hpp"
-#include "il2cpp_internals.hpp"
 
 #include "il2cpp-runtime-metadata.h"
 
@@ -73,7 +72,7 @@ namespace Gluon::Classes {
                     os << ", ";
                 }
 
-                const char *typeName = typeGetSimpleName(type);
+                const char *typeName = getTypeSimpleName(type);
                 os << typeName;
             }
             os << ">";
