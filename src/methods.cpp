@@ -196,7 +196,7 @@ namespace Gluon::Methods {
                 }
 
                 bool isPerfect;
-                if (!parameterMatch(current, std::span(info.genericTypes), std::span(info.argumentTypes), &isPerfect)) {]
+                if (!parameterMatch(current, std::span(info.genericTypes), std::span(info.argumentTypes), &isPerfect)) {
                     continue;
                 }
 
