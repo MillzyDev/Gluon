@@ -270,6 +270,10 @@ namespace Gluon {
     void **Il2CppFunctions::globalMetadataPtr;
     Il2CppGlobalMetadataHeader **Il2CppFunctions::globalMetadataHeaderPtr;
 
+    std::remove_pointer_t<decltype(Il2CppFunctions::il2cppMetadataRegistrationPtr)> Il2CppFunctions::il2cppMetadataRegistration;
+    std::remove_pointer_t<decltype(Il2CppFunctions::globalMetadataPtr)> Il2CppFunctions::globalMetadata;
+    std::remove_pointer_t<decltype(Il2CppFunctions::globalMetadataHeaderPtr)> Il2CppFunctions::globalMetadataHeader;
+
     uint64_t getOffsetFromPtr(uint32_t *ptr) {
         HANDLE main = GetCurrentProcess();
         HMODULE gameAssembly = GetModuleHandleA("GameAssembly.dll");
