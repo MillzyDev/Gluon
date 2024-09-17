@@ -11,6 +11,7 @@ namespace Gluon::Logging {
     void LoggerAdapter::logInfo(const std::string &message) {}
     void LoggerAdapter::logWarn(const std::string &message) {}
     void LoggerAdapter::logError(const std::string &message) {}
+    void LoggerAdapter::logDebug(const std::string &message) {}
     void LoggerAdapter::flushStreams() {}
 
     bool Logger::loggerAdapterReceived = false;

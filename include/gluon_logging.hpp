@@ -14,6 +14,7 @@ namespace Gluon::Logging {
         virtual void logInfo(const std::string &message);
         virtual void logWarn(const std::string &message);
         virtual void logError(const std::string &message);
+        virtual void logDebug(const std::string &message);
         virtual void flushStreams();
     };
 
@@ -57,6 +58,14 @@ namespace Gluon::Logging {
                 return;
             }
             Logger::loggerAdapter->logError(std::vformat(format.get(), std::make_format_args(args...)));
+        }
+
+        template<typename... TArgs>
+        inline static void debug(std::format_string<TArgs...> format, TArgs &&...args) {
+            if (!Logger::loggerAdapterReceived) {
+                return;
+            }
+            Logger::loggerAdapter->logDebug(std::vformat(format.get(), std::make_format_args(args...)));
         }
 
         inline static void flush() {
