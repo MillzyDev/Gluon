@@ -746,6 +746,8 @@ namespace Gluon {
         traceAllFunctions();
         traceDefaults();
         traceMetadata();
+
+        initialised = true;
     }
 
     const char *Il2CppFunctions::MetadataCache_GetStringFromIndex(StringIndex index) {
