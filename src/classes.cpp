@@ -26,21 +26,21 @@ namespace Gluon::Classes {
 
         typeIndexMutex.lock();
         if (typeIndex.empty()) {
-            typeIndex[Gluon::Il2CppInternals::builtinClasses.booleanClass] = "bool";
-            typeIndex[Gluon::Il2CppInternals::builtinClasses.byteClass] = "byte";
-            typeIndex[Gluon::Il2CppInternals::builtinClasses.sByteClass] = "sbyte";
-            typeIndex[Gluon::Il2CppInternals::builtinClasses.charClass] = "char";
-            typeIndex[Gluon::Il2CppInternals::builtinClasses.singleClass] = "float";
-            typeIndex[Gluon::Il2CppInternals::builtinClasses.doubleClass] = "double";
-            typeIndex[Gluon::Il2CppInternals::builtinClasses.int16Class] = "short";
-            typeIndex[Gluon::Il2CppInternals::builtinClasses.uint16Class] = "ushort";
-            typeIndex[Gluon::Il2CppInternals::builtinClasses.int32Class] = "int";
-            typeIndex[Gluon::Il2CppInternals::builtinClasses.uint32Class] = "uint32";
-            typeIndex[Gluon::Il2CppInternals::builtinClasses.int64Class] = "long";
-            typeIndex[Gluon::Il2CppInternals::builtinClasses.uint64Class] = "ulong";
-            typeIndex[Gluon::Il2CppInternals::builtinClasses.objectClass] = "object";
-            typeIndex[Gluon::Il2CppInternals::builtinClasses.stringClass] = "string";
-            typeIndex[Gluon::Il2CppInternals::builtinClasses.voidClass] = "void";
+            typeIndex[Gluon::Il2CppFunctions::il2cppDefaults->boolean_class] = "bool";
+            typeIndex[Gluon::Il2CppFunctions::il2cppDefaults->byte_class] = "byte";
+            typeIndex[Gluon::Il2CppFunctions::il2cppDefaults->sbyte_class] = "sbyte";
+            typeIndex[Gluon::Il2CppFunctions::il2cppDefaults->char_class] = "char";
+            typeIndex[Gluon::Il2CppFunctions::il2cppDefaults->single_class] = "float";
+            typeIndex[Gluon::Il2CppFunctions::il2cppDefaults->double_class] = "double";
+            typeIndex[Gluon::Il2CppFunctions::il2cppDefaults->int16_class] = "short";
+            typeIndex[Gluon::Il2CppFunctions::il2cppDefaults->uint16_class] = "ushort";
+            typeIndex[Gluon::Il2CppFunctions::il2cppDefaults->int32_class] = "int";
+            typeIndex[Gluon::Il2CppFunctions::il2cppDefaults->uint32_class] = "uint32";
+            typeIndex[Gluon::Il2CppFunctions::il2cppDefaults->int64_class] = "long";
+            typeIndex[Gluon::Il2CppFunctions::il2cppDefaults->uint64_class] = "ulong";
+            typeIndex[Gluon::Il2CppFunctions::il2cppDefaults->object_class] = "object";
+            typeIndex[Gluon::Il2CppFunctions::il2cppDefaults->string_class] = "string";
+            typeIndex[Gluon::Il2CppFunctions::il2cppDefaults->void_class] = "void";
         }
 
         auto it = typeIndex.find(Gluon::Il2CppFunctions::class_from_il2cpp_type(type));
