@@ -22,7 +22,6 @@ namespace Gluon::Classes {
         static std::mutex typeIndexMutex;
 
         Gluon::Il2CppFunctions::initialise();
-        Gluon::Il2CppInternals::initialise();
 
         typeIndexMutex.lock();
         if (typeIndex.empty()) {
