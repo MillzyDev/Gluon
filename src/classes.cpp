@@ -17,7 +17,7 @@
 #include "il2cpp-runtime-metadata.h"
 
 namespace Gluon::Classes {
-    const char *typeGetSimpleName(const Il2CppType *type) {
+    const char *getTypeSimpleName(const Il2CppType *type) {
         static std::unordered_map<Il2CppClass *, const char *> typeIndex;
         static std::mutex typeIndexMutex;
 

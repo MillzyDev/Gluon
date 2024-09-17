@@ -7,7 +7,7 @@
 #include "il2cpp-class-internals.h"
 
 namespace Gluon::Classes {
-    GLUON_API const char *typeGetSimpleName(const Il2CppType *type);
+    GLUON_API const char *getTypeSimpleName(const Il2CppType *type);
 
     GLUON_API std::string getClassStandardName(const Il2CppClass *klass, bool generics = true);
 
