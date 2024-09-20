@@ -36,7 +36,11 @@ namespace Gluon::Methods {
 
         if (klass->has_cctor && !klass->cctor_finished_or_no_cctor && !klass->cctor_started) {
             object->klass->cctor_started = true;
-            // TODO: Find and run cctor
+            const MethodInfo *method = findMethodUnsafe(klass, ".cctor", 0);
+            if (!method) {
+                return nullptr;
+            }
+
             object->klass->cctor_finished_or_no_cctor = true;
         }
 
@@ -149,7 +153,7 @@ namespace Gluon::Methods {
         if (!methodInfo) {
             Gluon::Logging::Logger::error("Could not fund method {} with {} parameters in class '{}'.", methodName.data(),
                                           argsCount, Gluon::Classes::getClassStandardName(klass).c_str());
-            // TODO: LogMethods (requires implementation)
+            logMethods(klass);
             return nullptr;
         }
 
@@ -161,7 +165,6 @@ namespace Gluon::Methods {
     }
 
     const MethodInfo *findMethod(const FindMethodInfo &info) {
-        // TODO
         static std::unordered_map<FindMethodInfo, const MethodInfo *> methodsCache;
         static std::shared_mutex methodsCacheMutex;
 
@@ -256,14 +259,14 @@ namespace Gluon::Methods {
 
                     for (auto const &[method, weight] : weightMap) {
                         Gluon::Logger::warn("findMethod weight {} method {}", weight, method->name);
-                        // TODO: LogMethod
+                        logMethod(method);
                     }
 
                     target = std::min_element(weightMap.begin(), weightMap.end(),
                                               [](auto a, auto b) { return a.second < b.second; })->first;
                     Logger::warn("Using the following:");
                     CRASH_UNLESS(target);
-                    // TODO: LogMethod
+                    logMethod(target);
                 }
             }
         }
@@ -301,7 +304,7 @@ namespace Gluon::Methods {
             }
             ss << ") in class '" << Gluon::Classes::getClassStandardName(klass) << "'!";
             Gluon::Logger::error("{}", ss.str().c_str());
-            // TODO: LogMethods
+            logMethods(klass);
         }
 
         // add to cache
@@ -319,7 +322,9 @@ namespace Gluon::Methods {
         if (asArgs) {
             if (to->byref) {
                 if (!from->byref) {
-                    // TODO: debug log
+                    Gluon::Logger::debug("to ({}, {}) is ref/out whilst from (, ) is not. Not convertible.",
+                                         Gluon::Classes::getTypeSimpleName(to), reinterpret_cast<const void *>(to),
+                                         Gluon::Classes::getTypeSimpleName(from), reinterpret_cast<const void *>(from));
                     return false;
                 }
             }
