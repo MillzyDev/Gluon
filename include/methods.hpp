@@ -197,6 +197,19 @@ namespace Gluon::Methods {
     bool parameterMatch(const MethodInfo *method, std::array<const Il2CppType *, size> const &argTypes, std::optional<bool *> isIdenticalOut) {
         return parameterMatch<0, size>(method, std::span<const Il2CppClass *const, 0>(), argTypes, isIdenticalOut);
     }
+
+    /**
+     * Logs information about the given method as a debug log
+     * @param method Method to log
+     */
+    GLUON_API void logMethod(const MethodInfo *method);
+
+    /**
+     * Calls logMethod for all methods in a class
+     * @param klass Class to log methods of
+     * @param logParents Whether to log methods of superclasses
+     */
+    GLUON_API void logMethods(const Il2CppClass *klass, bool logParents = false);
 }
 
 #endif

@@ -339,4 +339,94 @@ namespace Gluon::Methods {
 
         return ret;
     }
+
+    void logMethod(const MethodInfo *method) {
+        if (!method) {
+            return;
+        }
+
+        Gluon::Il2CppFunctions::initialise();
+
+        uint32_t flags = Gluon::Il2CppFunctions::method_get_flags(method, nullptr);
+
+        std::stringstream flagStream;
+        if (flags & METHOD_ATTRIBUTE_STATIC) {
+            flagStream << "static ";
+        }
+        if (flags & METHOD_ATTRIBUTE_VIRTUAL) {
+            flagStream << "virtual ";
+        }
+        if (flags & METHOD_ATTRIBUTE_ABSTRACT) {
+            flagStream << "abstract ";
+        }
+
+        const std::string &flagStrRef = flagStream.str();
+        const char *flagStr = flagStrRef.c_str();
+
+        const Il2CppType *retType = Gluon::Il2CppFunctions::method_get_return_type(method);
+        std::string retTypeStr = Gluon::Classes::getTypeSimpleName(retType);
+
+        const char *methodName = Gluon::Il2CppFunctions::method_get_name(method);
+        methodName = methodName ? methodName : "__noname__";
+
+        std::stringstream paramStream;
+        for (size_t i = 0; i < Gluon::Il2CppFunctions::il2cpp_method_get_param_count(method); i++) {
+            if (i > 0) {
+                paramStream << ", ";
+            }
+
+            auto *argType = Gluon::Il2CppFunctions::method_get_param(method, i);
+
+            if (Gluon::Il2CppFunctions::type_is_byref(argType)) {
+                paramStream << "out/ref ";
+            }
+
+            paramStream << Gluon::Classes::getTypeSimpleName(argType) << " ";
+
+            const char *name = Gluon::Il2CppFunctions::method_get_param_name(method, i);
+            paramStream << (name ? name : "__noname__");
+        }
+
+        const std::string &paramStrRef = paramStream.str();
+        const char *paramStr = paramStrRef.c_str();
+
+        Gluon::Logger::debug("{}{} {}({});", flagStr, retTypeStr, methodName, paramStr);
+    }
+
+    void logMethods(const Il2CppClass *klass, bool logParents) {
+        if (!klass) {
+            return;
+        }
+
+        if (klass->name) {
+            Gluon::Il2CppFunctions::initialise();
+            Gluon::Il2CppFunctions::Class_Init(const_cast<Il2CppClass *>(klass));
+        }
+
+        if (klass->method_count && !klass->methods) {
+            Gluon::Logger::warn("Class is valid and claims to have methods, but methods pointer is null! class name: {}",
+                                Gluon::Classes::getClassStandardName(klass).c_str());
+            return;
+        }
+
+        if (logParents) {
+            Gluon::Logger::info("class name: {}", Gluon::Classes::getClassStandardName(klass));
+        }
+
+        Gluon::Logger::debug("method_count: {}", klass->method_count);
+        for (int i = 0; i < klass->method_count; i++) {
+            if (klass->methods[i]) {
+                Gluon::Logger::debug("Method {}:", i);
+                logMethod(klass->methods[i]);
+            }
+            else {
+                Gluon::Logger::warn("Method {} does not exist!", i);
+            }
+        }
+
+        usleep(100); // 0.0001s
+        if (logParents && klass->parent && (klass->parent != klass)) {
+            logMethods(klass->parent, true);
+        }
+    }
 }
