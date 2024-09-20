@@ -93,6 +93,19 @@ namespace Gluon::Methods {
 
     GLUON_API bool isConvertibleFrom(const Il2CppType *to, const Il2CppType *from, bool asArgs = true);
 
+    /**
+     * Logs information about the given method as a debug log
+     * @param method Method to log
+     */
+    GLUON_API void logMethod(const MethodInfo *method);
+
+    /**
+     * Calls logMethod for all methods in a class
+     * @param klass Class to log methods of
+     * @param logParents Whether to log methods of superclasses
+     */
+    GLUON_API void logMethods(const Il2CppClass *klass, bool logParents = false);
+
     inline const Il2CppGenericContainer *getGenericContainer(const MethodInfo *method) {
         if (!method->is_generic) {
             SAFE_ABORT_MSG("METHOD IS NOD GENERIC");
@@ -139,7 +152,7 @@ namespace Gluon::Methods {
 
             if (argTypes[i] == nullptr) {
                 Gluon::Logger::warn("Arg type {} is null. Method: {:p}", i, reinterpret_cast<const void *>(method));
-                // TODO: il2cpp_utils::LogMethod
+                Gluon::Methods::logMethod(method);
                 continue;
             }
 
@@ -198,18 +211,7 @@ namespace Gluon::Methods {
         return parameterMatch<0, size>(method, std::span<const Il2CppClass *const, 0>(), argTypes, isIdenticalOut);
     }
 
-    /**
-     * Logs information about the given method as a debug log
-     * @param method Method to log
-     */
-    GLUON_API void logMethod(const MethodInfo *method);
-
-    /**
-     * Calls logMethod for all methods in a class
-     * @param klass Class to log methods of
-     * @param logParents Whether to log methods of superclasses
-     */
-    GLUON_API void logMethods(const Il2CppClass *klass, bool logParents = false);
+    // TODO: runMethod stuff
 }
 
 #endif
