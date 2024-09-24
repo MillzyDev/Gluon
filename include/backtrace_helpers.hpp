@@ -20,4 +20,4 @@ namespace Gluon::BacktraceHelpers {
     GLUON_API void *getBaseForAddress(const void *address);
 }
 
-#endif
+#endif // GLUON_BACKTRACE_HELPERS_HPP_

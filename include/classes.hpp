@@ -1,5 +1,5 @@
-#ifndef GLUON_IL2CPP_CLASSES_HPP_
-#define GLUON_IL2CPP_CLASSES_HPP_
+#ifndef GLUON_CLASSES_HPP_
+#define GLUON_CLASSES_HPP_
 
 #include <string>
 
@@ -14,4 +14,4 @@ namespace Gluon::Classes {
     GLUON_API Il2CppClass *findClassFromName(std::string_view namespaze, std::string_view name);
 }
 
-#endif
+#endif // GLUON_CLASSES_HPP_

@@ -70,4 +70,4 @@ namespace Gluon {
     }
 }
 
-#endif
+#endif // GLUON_ABORTION_HPP_

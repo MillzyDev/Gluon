@@ -28,4 +28,4 @@ namespace Gluon::Assemblies {
     GLUON_API const Il2CppAssembly *getAssembly(const std::string &name);
 }
 
-#endif
+#endif // GLUON_ASSEMBLIES_HPP_

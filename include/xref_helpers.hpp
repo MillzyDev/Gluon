@@ -189,4 +189,4 @@ namespace Gluon::XrefHelpers {
     }
 }
 
-#endif
+#endif // GLUON_XREF_HELPERS_HPP_

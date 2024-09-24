@@ -1,5 +1,5 @@
-#ifndef GLUON_IL2CPP_METHODS_HPP_
-#define GLUON_IL2CPP_METHODS_HPP_
+#ifndef GLUON_METHODS_HPP_
+#define GLUON_METHODS_HPP_
 
 #include <algorithm>
 #include <span>
@@ -214,4 +214,4 @@ namespace Gluon::Methods {
     // TODO: runMethod stuff
 }
 
-#endif
+#endif // GLUON_METHODS_HPP_

@@ -81,4 +81,4 @@ namespace Gluon {
     typedef ::Gluon::Logging::Logger Logger;
 }
 
-#endif
+#endif // GLUON_GLUON_LOGGING_HPP_

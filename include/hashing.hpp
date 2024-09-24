@@ -71,4 +71,4 @@ namespace std {
     };
 }
 
-#endif
+#endif // GLUON_HASHING_HPP_

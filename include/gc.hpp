@@ -1,5 +1,5 @@
-#ifndef GLUON_IL2CPP_GC_HPP_
-#define GLUON_IL2CPP_GC_HPP_
+#ifndef GLUON_GC_HPP_
+#define GLUON_GC_HPP_
 
 #include <cstddef>
 #include <new>
@@ -63,4 +63,4 @@ namespace Gluon::Gc {
     };
 }
 
-#endif // GLUON_IL2CPP_GC_HPP_
+#endif // GLUON_GC_HPP_

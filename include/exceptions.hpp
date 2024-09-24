@@ -1,5 +1,5 @@
-#ifndef GLUON_IL2CPP_EXCEPTIONS_HPP_
-#define GLUON_IL2CPP_EXCEPTIONS_HPP_
+#ifndef GLUON_EXCEPTIONS_HPP_
+#define GLUON_EXCEPTIONS_HPP_
 
 #include <cstdint>
 #include <format>
@@ -58,4 +58,4 @@ namespace Gluon::Exceptions {
 
 }
 
-#endif
+#endif // GLUON_EXCEPTIONS_HPP_
