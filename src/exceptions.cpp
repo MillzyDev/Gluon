@@ -10,6 +10,10 @@ namespace Gluon::Exceptions {
         Gluon::Logger::logBacktraceFull(this->stackTraceBuffer, this->stackTraceSize);
     }
 
+    void RunMethodException::logBacktrace() const {
+        Gluon::Logger ::logBacktraceFull(this->stackTraceBuffer, this->stackTraceSize);
+    }
+
     std::string exceptionToString(const Il2CppException *exception) noexcept {
         Gluon::Il2CppFunctions::initialise();
 

@@ -58,6 +58,38 @@ namespace Gluon::Exceptions {
     struct ResultException : StackTraceException {
         ResultException(std::string_view  message) : StackTraceException(message) {}
     };
+
+    struct RunMethodException : std::runtime_error {
+        constexpr static uint16_t kStackTraceSize = 256;
+
+        const Il2CppException *exception;
+        const MethodInfo *info;
+        void *stackTraceBuffer[kStackTraceSize];
+        uint16_t stackTraceSize;
+
+        RunMethodException(std::string_view message, const MethodInfo *info) __attribute__((noinline)) : std::runtime_error(
+                message.data()), exception(nullptr), info(info) {
+            stackTraceSize = Gluon::BacktraceHelpers::captureBacktrace(stackTraceBuffer, kStackTraceSize, 0);
+        }
+
+        RunMethodException(Il2CppException *exception, const MethodInfo *info) __attribute__((noinline)) : std::runtime_error(
+                exceptionToString(exception)), exception(exception), info(info) {
+            stackTraceSize = Gluon::BacktraceHelpers::captureBacktrace(stackTraceBuffer, kStackTraceSize, 0);
+        }
+
+        void logBacktrace() const;
+
+        [[noreturn]] void rethrow() const {
+            raiseException(exception);
+        }
+
+        [[nodiscard]] virtual const char *what() const noexcept override {
+            logBacktrace();
+            return std::runtime_error::what();
+        }
+    };
+
+
 }
 
 #endif // GLUON_EXCEPTIONS_HPP_
