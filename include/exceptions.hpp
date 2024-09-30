@@ -55,7 +55,9 @@ namespace Gluon::Exceptions {
 
     [[noreturn]] GLUON_API void raiseException(const Il2CppException *exception);
 
-
+    struct ResultException : StackTraceException {
+        ResultException(std::string_view  message) : StackTraceException(message) {}
+    };
 }
 
 #endif // GLUON_EXCEPTIONS_HPP_
