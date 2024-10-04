@@ -264,6 +264,10 @@ namespace Gluon {
         IL2CPP_FUNC(int, class_get_userdata_offset, ());
         IL2CPP_FUNC(void, set_default_thread_affinity, (int64_t affinity_mask));
 
+        // manually defined const definitions
+        IL2CPP_FUNC(const Il2CppType *, class_get_type_const, (const Il2CppClass *klass));
+        IL2CPP_FUNC(const char *, class_get_name_const, (const Il2CppClass *klass));
+
         // non-API IL2CPP functions
         IL2CPP_FUNC(bool, Class_Init, (Il2CppClass *klass));
         IL2CPP_FUNC(Il2CppClass *, MetadataCache_GetTypeInfoFromHandle, (Il2CppMetadataTypeHandle index));

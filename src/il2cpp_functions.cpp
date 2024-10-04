@@ -249,6 +249,9 @@ IL2CPP_INIT(void, class_set_userdata, (Il2CppClass * klass, void* userdata));
 IL2CPP_INIT(int, class_get_userdata_offset, ());
 IL2CPP_INIT(void, set_default_thread_affinity, (int64_t affinity_mask));
 
+IL2CPP_INIT(const Il2CppType *, class_get_type_const, (const Il2CppClass *klass));
+IL2CPP_INIT(const char *, class_get_name_const, (const Il2CppClass *klass));
+
 IL2CPP_INIT(bool, Class_Init, (Il2CppClass *klass));
 IL2CPP_INIT(Il2CppClass *, MetadataCache_GetTypeInfoFromHandle, (Il2CppMetadataTypeHandle handle));
 IL2CPP_INIT(Il2CppClass *, MetadataCache_GetTypeInfoFromTypeIndex, (TypeIndex index));
@@ -746,6 +749,15 @@ namespace Gluon {
         IL2CPP_LOAD(custom_attrs_free);
         IL2CPP_LOAD(class_set_userdata);
         IL2CPP_LOAD(class_get_userdata_offset);
+
+        // const definitions
+        *reinterpret_cast<FARPROC *>(&il2cpp_class_get_type_const) = GetProcAddress(il2cppAssembly, "il2cpp_class_get_type");
+        Gluon::Logging::Logger::info("Loaded: il2cpp_class_get_type CONST VERSION, error: {}", GetLastError());
+        SetLastError(0);
+
+        *reinterpret_cast<FARPROC *>(&il2cpp_class_get_name_const) = GetProcAddress(il2cppAssembly, "il2cpp_class_get_name");
+        Gluon::Logging::Logger::info("Loaded: il2cpp_class_get_name CONST VERSION, error: {}", GetLastError());
+        SetLastError(0);
 
         traceAllFunctions();
         traceDefaults();
