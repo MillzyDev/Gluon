@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <new>
 
+#include "gluon_config.hpp"
+
 namespace Gluon::Gc {
 
     /**
@@ -13,7 +15,7 @@ namespace Gluon::Gc {
      * @param size The size to allocate an instance of.
      * @return The allocated instance.
      */
-    [[nodiscard]] void *gcAllocSpecific(size_t size);
+    [[nodiscard]] GLUON_API void *gcAllocSpecific(size_t size);
 
     /**
      * @brief Deletes the provided allocated instance from the gcAllocSpecific function defined here.
@@ -21,7 +23,7 @@ namespace Gluon::Gc {
      *
      * @param address The pointer to free explicitly.
      */
-    void gcFreeSpecific(void *address) noexcept;
+    GLUON_API void gcFreeSpecific(void *address) noexcept;
 
     /**
      * @brief Reallocation implementation is equivalent to: alloc + free
@@ -29,7 +31,7 @@ namespace Gluon::Gc {
      * @param new_size The new size of the memory.
      * @return The resized instance.
      */
-    [[nodiscard]] void *gcReallocSpecific(void *address, size_t new_size);
+    [[nodiscard]] GLUON_API void *gcReallocSpecific(void *address, size_t new_size);
 
     template<class TValue>
     struct GcAllocator {
