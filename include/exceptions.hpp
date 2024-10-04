@@ -77,7 +77,7 @@ namespace Gluon::Exceptions {
             stackTraceSize = Gluon::BacktraceHelpers::captureBacktrace(stackTraceBuffer, kStackTraceSize, 0);
         }
 
-        void logBacktrace() const;
+        GLUON_API void logBacktrace() const;
 
         [[noreturn]] void rethrow() const {
             raiseException(exception);
