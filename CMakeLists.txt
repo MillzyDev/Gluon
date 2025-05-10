@@ -23,7 +23,7 @@ macro (RECURSE_FILES return_list filter)
     set(${return_list} ${file_list})
 endmacro ()
 
-if (NOT EXISTS "${CMAKE_SOURCE_DIR}/unity.cmake")
+if (EXISTS "${CMAKE_SOURCE_DIR}/unity.cmake")
     include("${CMAKE_SOURCE_DIR}/unity.cmake")
 else ()
     include("${CMAKE_CURRENT_SOURCE_DIR}/unity.cmake")
