@@ -5,7 +5,7 @@
 
 #include "il2cpp-object-internals.h"
 
-#define IL2CPP_ARRAY_ADDR(array, type, index) reinterpret_cast<type *>(Gluon::Arrays::il2cppArrayAddrWithSize(array, sizeof(type), index)
+#define IL2CPP_ARRAY_ADDR(array, type, index) reinterpret_cast<type *>(Gluon::Arrays::il2cppArrayAddrWithSize(array, sizeof(type), index))
 
 #define IL2CPP_ARRAY_GET(array, type, index) (*reinterpret_cast<type *>(IL2CPP_ARRAY_ADDR((array), type, (index)))
 
