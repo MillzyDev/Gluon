@@ -12,6 +12,17 @@
 #define SAFE_ABORT() Gluon::safeAbort(__PRETTY_FUNCTION__, __FILE__, __LINE__)
 #define SAFE_ABORT_MSG(...) Gluon::safeAbortMsg(__PRETTY_FUNCTION__, __FILE__, __LINE__, __VA_ARGS__)
 
+#define RET_UNLESS(retval, ...) ({      \
+    auto&& __temp__ = (__VA_ARGS__);    \
+    if (!__temp__) {                    \
+        return retval;                  \
+    }                                   \
+    Gluon::unwrapOptionals(__temp__); })
+
+#define RET_V_UNLESS(...) RET_UNLESS(, __VA_ARGS__)
+#define RET_DEFAULT_UNLESS(...) RET_UNLESS({ }, __VA_ARGS__)
+#define RET_0_UNLESS(...) RET_DEFAULT_UNLESS(__VA_ARGS__)
+
 namespace Gluon {
     template <class, template <class, class...> class>
     struct IsInstance : public std::false_type {};
