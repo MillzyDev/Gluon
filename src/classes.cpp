@@ -190,4 +190,17 @@ namespace Gluon::Classes {
         Gluon::Logging::Logger::error("Could not find class with namespace: {} and name: {}", namespaze.data(), name.data());
         return nullptr;
     }
+
+    Il2CppReflectionType *getSystemType(const Il2CppClass *klass) {
+        Gluon::Il2CppFunctions::initialise();
+        RET_0_UNLESS(klass);
+
+        const Il2CppType *type = Il2CppFunctions::class_get_type_const(klass);
+        return getSystemType(type);
+    }
+
+    Il2CppReflectionType *getSystemType(const Il2CppType *type) {
+        Gluon::Il2CppFunctions::initialise();
+        return reinterpret_cast<Il2CppReflectionType *>(Gluon::Il2CppFunctions::type_get_object(type));
+    }
 }
