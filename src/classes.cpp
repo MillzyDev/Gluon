@@ -213,7 +213,7 @@ namespace Gluon::Classes {
         for (std::size_t i = 0; i < count; i++) {
             Il2CppReflectionType *elementType = Gluon::Classes::getSystemType(types[i]);
             if (!elementType) {
-                Gluon::Logger::error("Failed to get type for {}", Gluon::Il2CppFunctions::type_get_name(elementType));
+                Gluon::Logger::error("Failed to get type for {}", Gluon::Il2CppFunctions::type_get_name(types[i]));
                 return nullptr;
             }
 

@@ -1,7 +1,6 @@
 #ifndef GLUON_TYPE_CHECK_HPP_
 #define GLUON_TYPE_CHECK_HPP_
 
-#include <classes.hpp>
 #include <concepts>
 #include <span>
 #include <string>
@@ -13,6 +12,10 @@
 #include "il2cpp_functions.hpp"
 
 #include "il2cpp-object-internals.h"
+
+namespace Gluon::Classes {
+    extern GLUON_API Il2CppClass *makeGeneric(const Il2CppClass *klass, const Il2CppType **types, std::uint32_t count);
+}
 
 namespace Gluon::TypeCheck {
     template <typename T>

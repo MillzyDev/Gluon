@@ -5,6 +5,7 @@
 #include <string>
 
 #include "gluon_config.hpp"
+#include "gluon_logging.hpp"
 #include "type_check.hpp"
 
 #include "il2cpp-class-internals.h"

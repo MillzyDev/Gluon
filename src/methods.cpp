@@ -121,7 +121,7 @@ namespace Gluon::Methods {
             Gluon::Logger::warn("Looking for: {}, resolved to: {}", slot, method->slot);
 
             method = resolveMethodWithSlot(klass, slot);
-            Gluon::Logger::info("After resolving method with slot: {} found method {}", slot, method);
+            Gluon::Logger::info("After resolving method with slot: {} found method {}", slot, reinterpret_cast<std::uintptr_t>(method));
         }
 
         // resolved method slot should be the slot we asked for if it came from a non-interface
