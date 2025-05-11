@@ -55,5 +55,82 @@ namespace Gluon::Methods {
         return findMethodUnsafe(klass, methodName, argsCount);
     }
 
+    const MethodInfo *resolveMethodWithSlot(Il2CppClass *klass, std::uint16_t slot) noexcept {
+        Gluon::Il2CppFunctions::initialise();
+
+        if (!klass->initialized_and_no_error) {
+            Gluon::Il2CppFunctions::Class_Init(klass);
+        }
+
+        const auto methodsEnd = klass->methods + klass->method_count;
+        for (auto itr = klass->methods; itr != methodsEnd; itr++) {
+            if ((*itr)->slot == slot) {
+                return *itr;
+            }
+        }
+
+        return nullptr;
+    }
+
+
+    const MethodInfo *resolveVTableSlot(Il2CppClass *klass, Il2CppClass *declaringClass, std::uint16_t slot) noexcept {
+        if (!klass->initialized_and_no_error) {
+            Gluon::Il2CppFunctions::Class_Init(klass);
+        }
+
+        if (!declaringClass->initialized_and_no_error) {
+            Gluon::Il2CppFunctions::Class_Init(klass);
+        }
+
+        if (Gluon::Il2CppFunctions::class_is_interface(declaringClass)) {
+            // if the declaring class is an interface, vtable_count means nothing and method_count should be used
+            // the vtables are still valid, however
+            if (slot >= declaringClass->method_count) { // tried to look for a slot outside the interface vtable
+                // dump some info so the user can know which method was attempted to be resolved
+                Gluon::Logger::error("Declaring class has a vtable that's too small, dumping resolve info:");
+                Gluon::Logger::error("Instance class:               {}::{}", klass->namespaze, klass->name);
+                Gluon::Logger::error("Instance class vtable slots:  {}", klass->vtable_count);
+                Gluon::Logger::error("Declaring class:              {}::{}", declaringClass->namespaze, declaringClass->name);
+                Gluon::Logger::error("Declaring class vtable slots: {}", declaringClass->vtable_count);
+                Gluon::Logger::error("Attempted slot:               {}", slot);
+                return nullptr;
+            }
+
+            for (std::uint16_t i = 0; i < klass->interface_offsets_count; i++) {
+                if (klass->interfaceOffsets[i].interfaceType == declaringClass) {
+                    std::int32_t offset = klass->interfaceOffsets[i].offset;
+                    RET_DEFAULT_UNLESS(offset + slot < klass->vtable_count);
+                    return klass->vtable[offset + slot].method;
+                }
+            }
+
+            // if klass is an interface, and we haven't found the method yet; we should look in klass->methods anyway
+            if (Gluon::Il2CppFunctions::class_is_interface(klass)) {
+                RET_DEFAULT_UNLESS(slot < klass->method_count);
+                return klass->methods[slot];
+            }
+
+            return nullptr;
+        }
+
+        RET_DEFAULT_UNLESS(slot < klass->vtable_count);
+        const MethodInfo *method = klass->vtable[slot].method;
+
+        if (method->slot != slot) {
+            Gluon::Logger::warn("Resolving vtable slot led to a method info with a different slot; this method could be abstract.");
+            Gluon::Logger::warn("Looking for: {}, resolved to: {}", slot, method->slot);
+
+            method = resolveMethodWithSlot(klass, slot);
+            Gluon::Logger::info("After resolving method with slot: {} found method {}", slot, method);
+        }
+
+        // resolved method slot should be the slot we asked for if it came from a non-interface
+        RET_DEFAULT_UNLESS(method && slot == method->slot);
+        return method;
+    }
+
+    const MethodInfo *resolveVTableSlot(Il2CppClass *klass, std::string_view declaringNamespace, std::string_view declaringClassName, std::uint16_t slot) noexcept {
+        return resolveVTableSlot(klass, Gluon::Classes::getClassFromName(declaringNamespace, declaringClassName), slot);
+    }
 
 }
