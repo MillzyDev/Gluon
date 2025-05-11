@@ -15,7 +15,7 @@ namespace Gluon::XrefHelpers {
     GLUON_API csh getCapstoneHandle();
 
     template<x86_insn... args>
-    constexpr bool insnMatch(cs_insn *insn) {
+    GLUON_HIDDEN constexpr bool insnMatch(cs_insn *insn) {
         if constexpr (sizeof...(args) > 0) {
             return (((insn->id == args) || ...));
         }
@@ -24,7 +24,7 @@ namespace Gluon::XrefHelpers {
 
     template<uint32_t nToRetOn, int retCount = -1, size_t szBytes = 4096, class F1, class F2>
     requires(nToRetOn >= 1)
-    auto findNth(const uint32_t *address, F1 &&match, F2 &&skip) {
+    GLUON_HIDDEN auto findNth(const uint32_t *address, F1 &&match, F2 &&skip) {
         cs_insn *insn = cs_malloc(getCapstoneHandle());
         auto ptr = reinterpret_cast<uint64_t>(address);
         auto instructions = reinterpret_cast<const uint8_t *>(address);
@@ -80,7 +80,7 @@ namespace Gluon::XrefHelpers {
 
     template<uint32_t nToRetOn, auto match, auto skip, int retCount = -1, size_t szBytes = 4096>
     requires(nToRetOn >= 1)
-    auto findNth(const uint32_t *address) {
+    GLUON_HIDDEN auto findNth(const uint32_t *address) {
         cs_insn *insn = cs_malloc(getCapstoneHandle());
         auto ptr = reinterpret_cast<uint64_t>(address);
         auto instructions = reinterpret_cast<const uint8_t *>(address);
@@ -146,7 +146,7 @@ namespace Gluon::XrefHelpers {
 
     template<uint32_t nToRetOn, bool includeR = false, int retCount = -1, size_t szBytes = 4096>
     requires (nToRetOn >= 1)
-    auto findNthCall(const uint32_t *address) {
+    GLUON_HIDDEN auto findNthCall(const uint32_t *address) {
         if constexpr (includeR) {
             return findNth<nToRetOn, retCount, szBytes>(address, &callConv, &insnMatch<X86_INS_CALL>);
         }
@@ -157,7 +157,7 @@ namespace Gluon::XrefHelpers {
 
     template<uint32_t nToRetOn, bool includeR = false, int retCount = -1, size_t szBytes = 4096>
     requires (nToRetOn >= 1)
-    auto findNthJmp(const uint32_t *address) {
+    GLUON_HIDDEN auto findNthJmp(const uint32_t *address) {
         if constexpr (includeR) {
             return findNth<nToRetOn, retCount, szBytes>(address, &jmpConv, &insnMatch<X86_INS_JMP>);
         }
@@ -168,7 +168,7 @@ namespace Gluon::XrefHelpers {
 
     template<uint32_t nToRetOn, bool includeR = false, int retCount = -1, size_t szBytes = 4096>
     requires (nToRetOn >= 1)
-    auto findNthLea(const uint32_t *address) {
+    GLUON_HIDDEN auto findNthLea(const uint32_t *address) {
         if constexpr (includeR) {
             return findNth<nToRetOn, retCount, szBytes>(address, &leaConv, &insnMatch<X86_INS_LEA>);
         }
@@ -179,7 +179,7 @@ namespace Gluon::XrefHelpers {
 
     template<uint32_t nToRetOn, bool includeR = false, int retCount = -1, size_t  szBytes = 4096>
     requires (nToRetOn >= 1)
-    auto findNthMov(const uint32_t *address) {
+    GLUON_HIDDEN auto findNthMov(const uint32_t *address) {
         if constexpr (includeR) {
             return findNth<nToRetOn, retCount, szBytes>(address, &movConv, &insnMatch<X86_INS_MOV>);
         }
