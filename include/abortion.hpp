@@ -23,6 +23,9 @@
 #define RET_DEFAULT_UNLESS(...) RET_UNLESS({ }, __VA_ARGS__)
 #define RET_0_UNLESS(...) RET_DEFAULT_UNLESS(__VA_ARGS__)
 
+// For use in fire-if-compiled asserts e.g. static_assert(false_t<T>, "message")
+template <class...> constexpr std::false_type false_t{};
+
 namespace Gluon {
     template <class, template <class, class...> class>
     struct IsInstance : public std::false_type {};
