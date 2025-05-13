@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <utility>
 
+#include "methods.hpp"
+
 namespace Gluon::Hashing {
     class HashPair {
     public:
@@ -44,6 +46,17 @@ namespace std {
     template<class T> struct hash<std::vector<T>> {
         std::size_t operator()(std::vector<T> const& seq) const noexcept {
             return Gluon::Hashing::hashSequence(seq);
+        }
+    };
+
+    template <>
+    struct std::hash<Gluon::Methods::FindMethodInfo> {
+        std::size_t operator()(const Gluon::Methods::FindMethodInfo &info) const noexcept {
+            constexpr auto hashPtr = std::hash<void *>{};
+            constexpr auto hashSize = std::hash<std::size_t>{};
+            constexpr auto hashStr = std::hash<std::string_view>{};
+
+            return hashPtr(info.klass) ^ hashStr(info.name) ^ hashSize(info.argTypes.size()) ^ hashSize(info.genericTypes.size());
         }
     };
 }
