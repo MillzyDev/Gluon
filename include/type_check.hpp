@@ -532,6 +532,54 @@ namespace Gluon::TypeCheck {
             return &klass->byval_arg;
         }
     };
+
+    template <typename T>
+    struct GLUON_HIDDEN Il2CppArgPtr {
+        static void *get(T const &arg) {
+            return reinterpret_cast<void *>(&arg);
+        }
+    };
+
+    template <typename T>
+    struct GLUON_HIDDEN Il2CppArgPtr<T *> {
+        static void *get(T *arg) {
+            return reinterpret_cast<void *>(arg);
+        }
+    };
+
+    /**
+     * @brief Represents a specialization type that should be used for exposing metadata from particular values.
+     * @tparam value The value to specialize this particular metadata getter on.
+     */
+    template <auto value>
+    struct GLUON_HIDDEN MetadataGetter;
+
+    template <class T>
+    struct GLUON_HIDDEN MethodDecomposer;
+
+    template <typename R, typename ...TArgs>
+    struct GLUON_HIDDEN MethodDecomposer<R (*)(TArgs...)> {
+        using mPtr = R (*)(TArgs...);
+    };
+
+    template <typename R, typename T, typename ...TArgs>
+        struct GLUON_HIDDEN MethodDecomposer<R (T:: *)(TArgs...)> {
+        using mPtr = R (*)(T *, TArgs...);
+    };
+
+    template <auto value>
+    concept IsValidIl2CppMethod = requires (decltype(value) v) {
+        typename MethodDecomposer<decltype(value)>::mPtr;
+        { Gluon::TypeCheck::MetadataGetter<value>::methodInfo() } -> std::same_as<const MethodInfo *>;
+    };
+
+    template <auto value>
+    requires (IsValidIl2CppMethod<value>)
+    struct GLUON_HIDDEN FPtrWrapper {
+        static auto get() {
+            return reinterpret_cast<typename MethodDecomposer<decltype(value)>::mPtr>(MetadataGetter<value>::methodInfo()->methodPointer);
+        }
+    };
 }
 
 #endif // GLUON_TYPE_CHECK_HPP_
