@@ -13,30 +13,48 @@
 
 #include "il2cpp-object-internals.h"
 
-#define NEED_NO_BOX(type)                       \
-    template<>                                  \
-    struct Gluon::TypeCheck::NeedBox<type> {    \
-        constexpr static bool value = false;    \
+#define NEED_NO_BOX(type)                                                                   \
+    template<>                                                                              \
+    struct Gluon::TypeCheck::NeedBox<type> {                                                \
+        constexpr static bool value = false;                                                \
     };
 
-
-
-#define DEFINE_IL2CPP_DEFAULT_TYPE(type, fieldName)                             \
-    template <>                                                                 \
-    struct GLUON_HIDDEN Gluon::TypeCheck::Il2CppNoArgClass<type> {              \
-        static Il2CppClass *get() {                                             \
-            Gluon::Il2CppFunctions::initialise();                               \
-            return Gluon::Il2CppFunctions::il2cppDefaults->fieldName##_class;   \
-        }                                                                       \
+#define DEFINE_IL2CPP_DEFAULT_TYPE(type, fieldName)                                         \
+    template <>                                                                             \
+    struct GLUON_HIDDEN Gluon::TypeCheck::Il2CppNoArgClass<type> {                          \
+        static inline Il2CppClass *get() {                                                  \
+            Gluon::Il2CppFunctions::initialise();                                           \
+            return Gluon::Il2CppFunctions::il2cppDefaults->fieldName##_class;               \
+        }                                                                                   \
     }
 
-#define DEFINE_IL2CPP_ARG_TYPE(type, namespaze, name)                           \
-    template <>                                                                 \
-    struct GLUON_HIDDEN Gluon::TypeCheck::Il2CppNoArgClass<type> {              \
-        static Il2CppClass *get() {                                             \
-            return Gluon::Classes::getClassFromName(namespaze, name);           \
-        }                                                                       \
+#define DEFINE_IL2CPP_ARG_TYPE(type, namespaze, name)                                       \
+    template <>                                                                             \
+    struct GLUON_HIDDEN Gluon::TypeCheck::Il2CppNoArgClass<type> {                          \
+        static inline Il2CppClass *get() {                                                  \
+            return Gluon::Classes::getClassFromName(namespaze, name);                       \
+        }                                                                                   \
     }
+
+#define DEFINE_IL2CPP_ARG_TYPE_GENERIC_STRUCT(templateType, namespaze, name)                \
+    template <>                                                                             \
+    struct GLUON_HIDDEN Gluon::TypeCheck::Il2CppGenStructNoArgClass<templateType> {         \
+        static inline Il2CppClass *get() {                                                  \
+            static Il2CppClass *klass = Gluon::Classes::getClassFromName(namepaze, name);   \
+            return klass;                                                                   \
+        }                                                                                   \
+    }
+
+#define DEFINE_IL2CPP_ARG_TYPE_GENERIC_CLASS(templateType, namespaze, name)                 \
+    template <>                                                                             \
+    struct GLUON_HIDDEN Gluon::TypeCheck::Il2CppGenClassNoArgClass<templateType> {          \
+        static Il2CppClass *klass = Gluon::Classes::getClassFromName(namespaze, name);      \
+        return klass;                                                                       \
+    };                                                                                      \
+    template <>                                                                             \
+    struct GLUON_HIDDEN Gluon::TypeCheck::NeedBoxGen<templateType> {                        \
+        constexpr static bool value = false;                                                \
+    };
 
 namespace Gluon::Classes {
     extern Il2CppClass *makeGeneric(const Il2CppClass *klass, std::span<const Il2CppClass *const> args);
@@ -424,8 +442,57 @@ namespace Gluon::TypeCheck {
         }
     };
 
-    // TODO: define arg type generic macros
     // TODO: arg type stuff
+    template <typename T>
+    struct GLUON_HIDDEN Il2CppNoArgType {
+        static const Il2CppType *get() {
+            const Il2CppClass *klass = Il2CppNoArgClass<T>::get();
+            if (klass) {
+                return &klass->byval_arg;
+            }
+            return nullptr;
+        }
+    };
+
+    template <typename T>
+    struct GLUON_HIDDEN Il2CppNoArgType<T *> {
+        static const Il2CppType *get() {
+            const Il2CppClass *klass = Il2CppNoArgClass<T *>::get();
+            if (klass) {
+                return &klass->byval_arg;
+            }
+            return nullptr;
+        }
+    };
+
+    template <typename T>
+    struct GLUON_HIDDEN Il2CppNoArgType<T &&> {
+        static const Il2CppType *get() {
+            const Il2CppClass *klass = Il2CppNoArgClass<T>::get();
+            if (klass) {
+                return &klass->byval_arg;
+            }
+            return nullptr;
+        }
+    };
+
+    template <typename T>
+    struct GLUON_HIDDEN Il2CppNoArgType<T &> {
+        static const Il2CppType *get() {
+            const Il2CppClass *klass = Il2CppNoArgClass<T>::get();
+            if (klass) {
+                return &klass->byval_arg;
+            }
+            return nullptr;
+        }
+    };
+
+    template <typename T>
+    struct GLUON_HIDDEN Il2CppNoArgType<T const &> {
+        static const Il2CppType *get() {
+            return Il2CppNoArgClass<T>::get();
+        }
+    };
 
     template <typename T>
     struct GLUON_HIDDEN Il2CppArgType {};
@@ -433,6 +500,8 @@ namespace Gluon::TypeCheck {
     template <typename T>
     struct GLUON_HIDDEN Il2CppArgType<T &> {
         static const Il2CppType *get(T &arg) {
+            // Pure reference type is not the same as ByRef<T>. Thus, use the byval version.
+            // Therefore, the only way to get the byref type match for any expression is to use a ByRef.
             const Il2CppClass *klass = Il2CppArgClass<T>::get(arg);
             return &klass->byval_arg;
         }
@@ -441,7 +510,25 @@ namespace Gluon::TypeCheck {
     template <typename T>
     struct GLUON_HIDDEN Il2CppArgType<T *> {
         static const Il2CppType *get(T *arg) {
-            const Il2CppClass *klass = Il2CppArgClass<T *>::get();
+            // A pointer could be passed in explicitly. In such a case, get the class of the pointer and return it non-byref.
+            const Il2CppClass *klass = Il2CppArgClass<T *>::get(arg);
+            return &klass->byval_arg;
+        }
+    };
+
+    template <typename T>
+    struct GLUON_HIDDEN Il2CppArgType<const T &> {
+        static const Il2CppType *get(const T& arg) {
+            // A method cannot store a result back to a const ref. It is not a C# ref.
+            const Il2CppClass *klass = Il2CppArgClass<T>::get(arg);
+            return &klass->byval_arg;
+        }
+    };
+
+    template <typename T>
+    struct GLUON_HIDDEN Il2CppArgType<T &&> {
+        static const Il2CppType *get(T &&arg) {
+            const Il2CppClass *klass = Il2CppArgClass<T>::get(arg);
             return &klass->byval_arg;
         }
     };
