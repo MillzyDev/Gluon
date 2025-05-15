@@ -31,6 +31,22 @@ namespace Gluon::Classes {
         return klass;
     }
 
+    template <typename T>
+    const Il2CppType *extractType(T &&arg) {
+        const Il2CppType *type = Gluon::TypeCheck::Il2CppArgType<T>::get(arg);
+
+        if (!type) {
+            Gluon::Logger::error("extractType: failed to determine type - arg was likely nullptr.");
+        }
+        return type;
+    }
+
+    template <class T>
+    const Il2CppType *extractIndependentType() {
+        static const Il2CppType *type = RET_0_UNLESS(Gluon::TypeCheck::Il2CppNoArgType<T>::get());
+        return type;
+    }
+
     GLUON_API Il2CppReflectionType *makeGenericType(Il2CppReflectionType *genericType, Il2CppArray *types);
     GLUON_API Il2CppClass *makeGeneric(const Il2CppClass *klass, std::span<const Il2CppClass *const> args);
     GLUON_API Il2CppClass *makeGeneric(const Il2CppClass *klass, const Il2CppType **types, std::uint32_t count);
