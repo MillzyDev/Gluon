@@ -13,6 +13,10 @@
 
 #include "il2cpp-object-internals.h"
 
+#ifndef CLASS_OF
+#define CLASS_OF(...) (Gluon::TypeCheck::Il2CppNoArgClass<__VA_ARGS__>::get())
+#endif // CLASS_OF
+
 #define NEED_NO_BOX(type)                                                                   \
     template<>                                                                              \
     struct Gluon::TypeCheck::NeedBox<type> {                                                \
