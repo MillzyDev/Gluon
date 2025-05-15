@@ -51,10 +51,9 @@ namespace Gluon::Classes {
             typeIndexMutex.unlock();
             return it->second;
         }
-        else {
-            typeIndexMutex.unlock();
-            return Gluon::Il2CppFunctions::type_get_name(type);
-        }
+
+        typeIndexMutex.unlock();
+        return Gluon::Il2CppFunctions::type_get_name(type);
     }
 
     void genericsToStringHelper(const Il2CppGenericClass *genericClass, std::ostream  &os) {
