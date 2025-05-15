@@ -1,6 +1,7 @@
 #ifndef GLUON_METHODS_HPP_
 #define GLUON_METHODS_HPP_
 
+#include <array>
 #include <cstdint>
 #include <optional>
 #include <ranges>
@@ -9,9 +10,13 @@
 #include <vector>
 
 #include "il2cpp-api.h"
+#include "il2cpp-tabledefs.h"
 
 #include "classes.hpp"
+#include "boxing.hpp"
 #include "gluon_config.hpp"
+#include "result.hpp"
+#include "type_concepts.hpp"
 
 namespace Gluon::Methods {
     struct FindMethodInfo {
@@ -56,6 +61,63 @@ namespace Gluon::Methods {
 
         bool operator!=(FindMethodInfo const &) const = default;
     };
+
+    template <class T>
+    void *extractValue(T &&arg) {
+        Gluon::Il2CppFunctions::initialise();
+
+        using Dt = std::decay_t<T>;
+        if constexpr (std::is_same_v<Dt, Il2CppType *> || std::is_same_v<Dt, Il2CppClass *>) {
+            return nullptr;
+        }
+        else if constexpr (std::is_pointer_v<Dt>) {
+            if constexpr (std::is_base_of_v<Il2CppObject, std::remove_pointer_t<Dt>>) {
+                if (arg) {
+                    Il2CppClass *klass = Gluon::Il2CppFunctions::object_get_class(reinterpret_cast<Il2CppObject *>(arg));
+#ifdef UNITY_2021
+                    if (klass && Gluon::Il2CppFunctions::class_is_valuetype(klass)) {
+#else // UNITY_2021
+                    if (klass && klass->is_valuetype) {
+#endif // UNITY_2021
+                        // arg is an Il2CppObject * of a value type; it needs unboxing
+                        return Gluon::Il2CppFunctions::object_unbox(reinterpret_cast<Il2CppObject *>(arg));
+                    }
+                }
+            }
+            return arg;
+        }
+        else if constexpr (Gluon::TypeConcepts::HasIl2CppConversion<Dt>) {
+            return arg.convert();
+        }
+        else {
+            return const_cast<Dt *>(&arg);
+        }
+    }
+
+        template <class T>
+        void *extractTypeValue(T &arg) {
+            using Dt = std::decay_t<T>;
+
+            if constexpr (std::is_same_v<std::nullptr_t, T>) {
+                return nullptr;
+            }
+            else if constexpr (Gluon::TypeConcepts::HasIl2CppConversion<T>) {
+                return arg.convert();
+            }
+            else if constexpr (std::is_pointer_v<Dt>) {
+                // For a pointer type, get the IL2CPP class and unbox
+                auto *klass = CLASS_OF(Dt);
+                if (klass && Gluon::Il2CppFunctions::class_is_valuetype(klass)) {
+                    // Arg is an object of a value type and must be unboxed
+                    return Gluon::Il2CppFunctions::object_unbox(reinterpret_cast<Il2CppObject *>(arg));
+                }
+
+                return arg;
+            }
+            else {
+                return const_cast<Dt *>(&arg);
+            }
+        }
 
     /**
      * @brief Finds the first MethodInfo* described by the given Il2CppClass*, method name, and argument count.
@@ -137,11 +199,11 @@ namespace Gluon::Methods {
         return findMethod(klass, methodName, std::span<const Il2CppClass *const>(), std::span<const Il2CppType *const>());
     }
 
-    bool isConvertibleFrom(const Il2CppType *to, const Il2CppType *from, bool asArgs);
+    bool isConvertibleFrom(const Il2CppType *to, const Il2CppType *from, bool asArgs = true);
 
     inline const Il2CppGenericContainer *getGenericContainer(const MethodInfo *method) {
         if (!method->is_generic) {
-            SAFE_ABORT("METHOD IS NOT GENERIC");
+            SAFE_ABORT_MSG("METHOD IS NOT GENERIC");
         }
 
         // pyrocynical lol
@@ -274,6 +336,122 @@ namespace Gluon::Methods {
                         std::optional<bool *> isIdenticalOut) {
         return parameterMatch<0, argsCount>(method, std::span<const Il2CppClass *const, 0>(), argTypes, isIdenticalOut);
     }
+
+    template <typename TOut>
+    using MethodResult = Gluon::Result<TOut, Gluon::Exceptions::RunMethodException>;
+
+    template <class TOut = Il2CppObject *, bool checkTypes = true, class T, class ...TArgs>
+    requires(!std::is_convertible_v<T, std::string_view> || std::is_same_v<T, std::nullptr_t>)
+    MethodResult<TOut> runMethod(T &&wrappedInstance, const MethodInfo *method, TArgs &&...params) noexcept {
+        if (!method) {
+            return Gluon::Exceptions::RunMethodException("MethodInfo cannot be null!", nullptr);
+        }
+
+        if constexpr (checkTypes) {
+            // only check args if TArgs is > 0
+            if (method->parameters_count != sizeof...(TArgs)) {
+                Gluon::Logger::warn("MethodInfo parameter count {} does not match actual parameter count {}",
+                                    method->parameters_count, sizeof...(TArgs));
+            }
+
+            if constexpr (sizeof...(TArgs) > 0) {
+                std::array<const Il2CppType *, sizeof...(TArgs)> types{ Gluon::Classes::extractType(params)... };
+
+                if (!parameterMatch(method, types, std::nullopt)) {
+                    return Gluon::Exceptions::RunMethodException("Parameters do not match", method);
+                }
+            }
+
+            if constexpr (!std::is_same_v<TOut, void>) {
+                if (const Il2CppType *outType = Gluon::Classes::extractIndependentType<TOut>();
+                    outType && !isConvertibleFrom(outType, method->return_type, false)) {
+                    Gluon::Logger::warn("User requested TOut {} does not match method's return type {}",
+                                        Gluon::Classes::getTypeSimpleName(outType),
+                                        Gluon::Classes::getTypeSimpleName(method->return_type));
+
+                    return Gluon::Exceptions::RunMethodException(std::format("Return type of method is not convertible to {}",
+                        Gluon::Classes::getTypeSimpleName(outType)), method);
+                }
+            }
+        }
+
+        const void *inst = extractValue(wrappedInstance);
+
+        bool isStatic = method->flags & METHOD_ATTRIBUTE_STATIC;
+        if (!isStatic && !inst) {
+            return Gluon::Exceptions::RunMethodException("Method is instance but instance is null", method);
+        }
+
+        Il2CppException *exception = nullptr;
+        std::array<void *, sizeof...(params)> invokeParams{ extractTypeValue(params)... };
+
+        Gluon::Il2CppFunctions::initialise();
+
+        auto *ret = Gluon::Il2CppFunctions::runtime_invoke(method, inst, invokeParams.data(), &exception);
+
+        if (exception) {
+            return Gluon::Exceptions::RunMethodException(exception, method);
+        }
+
+        // void return
+        if constexpr (std::is_same_v<void, TOut>) {
+            return MethodResult<TOut>();
+        }
+
+        if constexpr (checkTypes) {
+            if (ret) {
+                // This is done instead of extractType to avoid unboxing because we cannot be certain of the return type
+                if (const Il2CppType *outType = Gluon::Classes::extractIndependentType<TOut>()) {
+                    if (const Il2CppType *returnType = Gluon::Classes::extractType(ret);
+                        !isConvertibleFrom(outType, returnType, false)) {
+                        Gluon::Logger::warn("User requested TOut {} does not match method's return type {}",
+                                        Gluon::Classes::getTypeSimpleName(outType),
+                                        Gluon::Classes::getTypeSimpleName(returnType));
+                    }
+                }
+            }
+        }
+
+        if constexpr (!std::is_same_v<void, TOut>) {
+            if constexpr (Gluon::TypeCheck::NeedBox<TOut>::value) { // returned value is boxed
+                auto retValue = Gluon::Boxing::unbox<TOut>(ret);
+                Gluon::Il2CppFunctions::il2cpp_gc_free_fixed(retValue);
+                return retValue;
+            }
+            else if constexpr (Gluon::TypeConcepts::Il2CppReferenceTypeWrapper<TOut>) { // returned value is a reference type
+                return TOut(ret);
+            }
+            else { // probably a ref type pointer
+                return static_cast<TOut>(static_cast<void *>(ret));
+            }
+        }
+    }
+
+    template <class TOut = Il2CppObject *, bool checkTypes = true, class T, class ...TArgs>
+    MethodResult<TOut> runMethod(T &&classOrInstance, std::string_view name, TArgs &&...params) {
+        std::array<const Il2CppType *, sizeof...(TArgs)> const types{ Gluon::Classes::extractType(params)... };
+        const MethodInfo *method = RET_NULLOPT_UNLESS(findMethod(classOrInstance, method, types));
+        return runMethod<TOut, checkTypes>(std::forward<T>(classOrInstance), method, std::forward<TArgs>(params)...);
+    }
+
+    template <class TOut = Il2CppObject *, bool checkTypes = true, class ...TArgs>
+    MethodResult<TOut> runMethod(std::string_view namespaze, std::string_view className, std::string_view name, TArgs &&...params) {
+        Il2CppClass *klass = RET_NULLOPT_UNLESS(Gluon::Classes::getClassFromName(namespaze, className));
+        return runMethod<TOut, checkTypes>(klass, name, params...);
+    }
+
+    template <class TOut = void, bool checkTypes = true, class ...TArgs>
+    inline TOut runMethodRethrow(TArgs &&...params) {
+        auto result = runMethod<TOut, checkTypes>(std::forward<TArgs>(params)... );
+
+        if constexpr (!std::is_same_v<TOut, void>) {
+            return result.getOrRethrow();
+        }
+        else if constexpr (std::is_same_v<TOut, void>) {
+            return result.rethrow();
+        }
+    }
+
 }
 
 #endif // GLUON_METHODS_HPP_
