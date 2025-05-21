@@ -10,12 +10,76 @@
 #include "abortion.hpp"
 #include "arrays.hpp"
 #include "classes.hpp"
+#include "gc.hpp"
 #include "hashing.hpp"
 #include "il2cpp_functions.hpp"
 
 #include "il2cpp-tabledefs.h"
 
 namespace Gluon::Methods {
+    Il2CppObject *createManual(const Il2CppClass *klass) noexcept {
+        if (!klass) {
+            Gluon::Logger::error("Cannot create a manual object on a null class!");
+            return nullptr;
+        }
+
+        if (!klass->initialized) {
+            Gluon::Logger::error("Cannot create a manual object on a class that is not initialised. {:x}",
+                reinterpret_cast<std::uintptr_t>(klass));
+            return nullptr;
+        }
+
+        const auto object = static_cast<Il2CppObject *>(Gluon::Gc::gcAllocSpecific(klass->instance_size));
+
+        if (!object) {
+            Gluon::Logger::error("Failed to allocated GC specific area for instance size: {}", klass->instance_size);
+            return nullptr;
+        }
+
+        object->klass = const_cast<Il2CppClass *>(klass);
+
+        // Call cctor, we don't bother making a new thread for type initialisation. BE WARNED!
+        if (klass->has_cctor && !klass->cctor_finished_or_no_cctor && !klass->cctor_started) {
+            object->klass->cctor_started = true;
+            const MethodInfo *cctor = RET_0_UNLESS(findMethodUnsafe(klass, ".cctor", 0));
+            RET_0_UNLESS(runMethodOpt(nullptr, cctor));
+            object->klass->cctor_finished_or_no_cctor = true;
+        }
+
+        return object;
+    }
+
+    Il2CppObject *createManualThrow(const Il2CppClass *klass) {
+        if (!klass->initialized) {
+            throw Gluon::Exceptions::StackTraceException(std::format(
+                "Cannot create a manual object on a class that is not initialised. {:x}",
+                reinterpret_cast<std::uintptr_t>(klass)));
+        }
+
+        const auto object = static_cast<Il2CppObject *>(Gluon::Gc::gcAllocSpecific(klass->instance_size));
+
+        if (!object) {
+            throw Gluon::Exceptions::StackTraceException(std::format("Failed to allocated GC specific area for instance size: {}", klass->instance_size));
+        }
+
+        // Call cctor, we don't bother making a new thread for type initialisation. BE WARNED!
+        if (klass->has_cctor && !klass->cctor_finished_or_no_cctor && !klass->cctor_started) {
+            object->klass->cctor_started = true;
+            const MethodInfo *cctor = findMethodUnsafe(klass, ".cctor", 0);
+            if (!cctor) {
+                throw Gluon::Exceptions::StackTraceException("Failed to find .cctor");
+            }
+
+            if (!runMethodOpt(nullptr, cctor)) {
+                throw Gluon::Exceptions::StackTraceException("Failed to run .cctor");
+            }
+
+            object->klass->cctor_finished_or_no_cctor = true;
+        }
+
+        return object;
+    }
+
     const MethodInfo *findMethodUnsafe(const Il2CppClass *klass, std::string_view methodName, int argsCount) {
         static std::unordered_map<std::pair<const Il2CppClass *, std::pair<std::string, decltype(MethodInfo::parameters_count)>>,
             const MethodInfo *, Gluon::Hashing::HashPair3> methodsCache;

@@ -19,6 +19,20 @@
 #include "type_concepts.hpp"
 
 namespace Gluon::Methods {
+    /**
+     * @brief Specifies how an IL2CPP object should be created.
+     */
+    enum struct CreationType {
+        /**
+         * @brief Created object is a "managed" object; can be GC'd
+         */
+        Temporary,
+        /**
+         * @brief Created object is manual, must be freed explicitly via delete.
+         */
+        Manual
+    };
+
     struct FindMethodInfo {
         Il2CppClass *klass = nullptr;
         std::string name;
@@ -61,6 +75,38 @@ namespace Gluon::Methods {
 
         bool operator!=(FindMethodInfo const &) const = default;
     };
+
+    /**
+     * Manually creates an instance of the provided Il2CppClass *.
+     * The created instance's type initialiser will NOT execute on another thread.
+     * Must be freed using gc_free_specific
+     * @param klass The Il2CppClass to create an instance of
+     * @return The created instance, or nullptr if it failed for any reason.
+     */
+    Il2CppObject *createManual(const Il2CppClass *klass) noexcept;
+
+    /**
+     * Manually creates an instance of the provided Il2CppClass *.
+     * The created instance's type initialiser will NOT execute on another thread.
+     * Must be freed using gc_free_specific
+     * Throws a Gluon::Exceptions::StackTraceException on failure
+     * @param klass The Il2CppClass to create an instance of
+     * @return The created instance, or nullptr if it failed for any reason.
+     */
+    Il2CppObject *createManualThrow(const Il2CppClass *klass);
+
+    template <class T>
+    Il2CppObject *toIl2CppObject(T &&arg) {
+        Gluon::Il2CppFunctions::initialise();
+
+        using Dt = std::decay_t<T>;
+        if constexpr (std::is_same_v<Dt, Il2CppType *> || std::is_same_v<Dt, Il2CppClass *>) {
+            return nullptr;
+        }
+
+        Il2CppClass *klass = RET_0_UNLESS(Gluon::Classes::extractClass(arg));
+        return Gluon::Il2CppFunctions::value_box(klass, &arg);
+    }
 
     template <class T>
     void *extractValue(T &&arg) {
@@ -162,41 +208,41 @@ namespace Gluon::Methods {
         Il2CppClass *klass = Gluon::Classes::extractClass(std::forward<T>(instanceOrClass));
         const auto genericTypesSpan = std::span<const Il2CppClass *const>(std::forward<TGenerics>(genericTypes));
         const auto argTypesSpan = std::span<const Il2CppType *const>(std::forward<TArgs>(argTypes));
-        return findMethod(FindMethodInfo(klass, methodName, genericTypesSpan, argTypesSpan));
+        return Gluon::Methods::findMethod(FindMethodInfo(klass, methodName, genericTypesSpan, argTypesSpan));
     }
 
     // no generic args
     template <typename T, typename TArgs>
     requires(!std::is_constructible_v<T, std::string_view>)
     const MethodInfo *findMethod(T &&instanceOrClass, std::string_view methodName, TArgs &&argTypes) {
-        return findMethod(std::forward<T>(instanceOrClass), methodName, std::forward<TArgs>(argTypes));
+        return Gluon::Methods::findMethod(std::forward<T>(instanceOrClass), methodName, std::forward<TArgs>(argTypes));
     }
 
     // no args
     template <typename T>
     requires(!std::is_constructible_v<T, std::string_view>)
     const MethodInfo *findMethod(T &&instanceOrClass, std::string_view methodName) {
-        return findMethod(std::forward<T>(instanceOrClass), methodName, std::span<const Il2CppClass *const>(), std::span<const Il2CppType *const>());
+        return Gluon::Methods::findMethod(std::forward<T>(instanceOrClass), methodName, std::span<const Il2CppClass *const>(), std::span<const Il2CppType *const>());
     }
 
     // generic and array args
     template <typename TGenerics, typename TArgs>
     const MethodInfo *findMethod(const std::string_view namespaze, const std::string_view className, std::string_view methodName, TGenerics &&genericTypes, TArgs &&argTypes) {
         Il2CppClass *klass = Gluon::Classes::getClassFromName(namespaze, className);
-        return findMethod(klass, methodName, std::forward<TGenerics>(genericTypes), std::forward<TArgs>(argTypes));
+        return Gluon::Methods::findMethod(klass, methodName, std::forward<TGenerics>(genericTypes), std::forward<TArgs>(argTypes));
     }
 
     // no generic args
     template <typename TArgs>
     const MethodInfo *findMethod(const std::string_view namespaze, const std::string_view className, std::string_view methodName, TArgs &&argTypes) {
         Il2CppClass *klass = Gluon::Classes::getClassFromName(namespaze, className);
-        return findMethod(klass, methodName, std::span<const Il2CppClass *const>(), std::forward<TArgs>(argTypes));
+        return Gluon::Methods::findMethod(klass, methodName, std::span<const Il2CppClass *const>(), std::forward<TArgs>(argTypes));
     }
 
     // no args
     inline const MethodInfo *findMethod(const std::string_view namespaze, const std::string_view className, std::string_view methodName) {
         Il2CppClass *klass = Gluon::Classes::getClassFromName(namespaze, className);
-        return findMethod(klass, methodName, std::span<const Il2CppClass *const>(), std::span<const Il2CppType *const>());
+        return Gluon::Methods::findMethod(klass, methodName, std::span<const Il2CppClass *const>(), std::span<const Il2CppType *const>());
     }
 
     bool isConvertibleFrom(const Il2CppType *to, const Il2CppType *from, bool asArgs = true);
@@ -229,7 +275,7 @@ namespace Gluon::Methods {
     template <typename T, typename... TArgs>
     requires(!std::is_same_v<T, Il2CppClass *>)
     const MethodInfo *resolveVTableSlot(T &&instance, TArgs &&...args) noexcept {
-        return resolveVTableSlot(Gluon::Classes::extractClass(instance), args...);
+        return Gluon::Methods::resolveVTableSlot(Gluon::Classes::extractClass(instance), args...);
     }
 
     /**
@@ -322,19 +368,19 @@ namespace Gluon::Methods {
     template <std::size_t argsCount>
     bool parameterMatch(const MethodInfo *method, const std::span<const Il2CppType *const, argsCount> argTypes,
                         const std::optional<bool *> isIdenticalOut) {
-        return parameterMatch<0, argsCount>(method, std::span<const Il2CppClass *const, 0>(), argTypes, isIdenticalOut);
+        return Gluon::Methods::parameterMatch<0, argsCount>(method, std::span<const Il2CppClass *const, 0>(), argTypes, isIdenticalOut);
     }
 
     template <bool strictEqual = false, std::size_t genericsCount, std::size_t argsCount>
     bool parameterMatch(const MethodInfo *method, std::array<const Il2CppClass *, genericsCount> const &genericTypes,
                         std::array<const Il2CppType *, argsCount> const &argTypes, std::optional<bool *> isIdenticalOut) {
-        return parameterMatch<genericsCount, argsCount>(method, genericTypes, argTypes, isIdenticalOut);
+        return Gluon::Methods::parameterMatch<genericsCount, argsCount>(method, genericTypes, argTypes, isIdenticalOut);
     }
 
     template <bool strictEqual = false, size_t argsCount>
     bool parameterMatch(const MethodInfo *method, std::array<const Il2CppType *, argsCount> const &argTypes,
                         std::optional<bool *> isIdenticalOut) {
-        return parameterMatch<0, argsCount>(method, std::span<const Il2CppClass *const, 0>(), argTypes, isIdenticalOut);
+        return Gluon::Methods::parameterMatch<0, argsCount>(method, std::span<const Il2CppClass *const, 0>(), argTypes, isIdenticalOut);
     }
 
     template <typename TOut>
@@ -375,7 +421,7 @@ namespace Gluon::Methods {
             }
         }
 
-        const void *inst = extractValue(wrappedInstance);
+        const void *inst = Gluon::Methods::extractValue(wrappedInstance);
 
         bool isStatic = method->flags & METHOD_ATTRIBUTE_STATIC;
         if (!isStatic && !inst) {
@@ -395,7 +441,7 @@ namespace Gluon::Methods {
 
         // void return
         if constexpr (std::is_same_v<void, TOut>) {
-            return MethodResult<TOut>();
+            return Gluon::Methods::MethodResult<TOut>();
         }
 
         if constexpr (checkTypes) {
@@ -430,18 +476,18 @@ namespace Gluon::Methods {
     template <class TOut = Il2CppObject *, bool checkTypes = true, class T, class ...TArgs>
     MethodResult<TOut> runMethod(T &&classOrInstance, std::string_view name, TArgs &&...params) {
         std::array<const Il2CppType *, sizeof...(TArgs)> const types{ Gluon::Classes::extractType(params)... };
-        const MethodInfo *method = RET_NULLOPT_UNLESS(findMethod(classOrInstance, method, types));
-        return runMethod<TOut, checkTypes>(std::forward<T>(classOrInstance), method, std::forward<TArgs>(params)...);
+        const MethodInfo *method = RET_NULLOPT_UNLESS(Gluon::Methods::findMethod(classOrInstance, method, types));
+        return Gluon::Methods::runMethod<TOut, checkTypes>(std::forward<T>(classOrInstance), method, std::forward<TArgs>(params)...);
     }
 
     template <class TOut = Il2CppObject *, bool checkTypes = true, class ...TArgs>
     MethodResult<TOut> runMethod(std::string_view namespaze, std::string_view className, std::string_view name, TArgs &&...params) {
         Il2CppClass *klass = RET_NULLOPT_UNLESS(Gluon::Classes::getClassFromName(namespaze, className));
-        return runMethod<TOut, checkTypes>(klass, name, params...);
+        return Gluon::Methods::runMethod<TOut, checkTypes>(klass, name, params...);
     }
 
     template <class TOut = void, bool checkTypes = true, class ...TArgs>
-    inline TOut runMethodRethrow(TArgs &&...params) {
+    TOut runMethodRethrow(TArgs &&...params) {
         auto result = runMethod<TOut, checkTypes>(std::forward<TArgs>(params)... );
 
         if constexpr (!std::is_same_v<TOut, void>) {
@@ -450,6 +496,83 @@ namespace Gluon::Methods {
         else if constexpr (std::is_same_v<TOut, void>) {
             return result.rethrow();
         }
+    }
+
+    template <class TOut = void, bool checkTypes = true, class ...TArgs>
+    std::optional<Gluon::TypeOrMonostate<TOut>> runMethodOpt(TArgs &&...params) noexcept {
+        auto result = runMethod<TOut, checkTypes>(std::forward<TArgs>(params)...);
+
+        if (const auto exception = result.asOptionalException()) {
+            Gluon::Logger::error("{}: failed with exception: {}",
+                Gluon::Il2CppFunctions::method_get_name(exception.value()->info),
+                Gluon::Exceptions::exceptionToString(exception.value()->ex).c_str());
+            return std::nullopt;
+        }
+
+        return result.getResult();
+    }
+
+    /**
+     * Allocates a new instance of a particular Il2CppClass *, either allowing it to be GC'd normally or manually controlled.
+     * The Il2CppClass * is derived from the TOut template parameter.
+     * The found constructor method will be cached.
+     * Will throw either a Gluon::Exceptions::StackTraceException or Gluon::Exceptions::RunMethodException if errors occur.
+     * @tparam TOut The type to create
+     * @tparam creationType How the instance should be created
+     * @tparam TArgs The arguments to call the constructor with
+     * @param args The arguments to call the constructor with
+     */
+    template <class TOut, CreationType creationType = CreationType::Temporary, typename ...TArgs>
+    TOut newSpecificUnsafe(TArgs &&...args) {
+        static Il2CppClass *klass = CLASS_OF(TOut);
+
+        Il2CppObject *object;
+
+        if constexpr (creationType == CreationType::Temporary) {
+            object = Gluon::Il2CppFunctions::object_new(klass);
+
+            if (!object) {
+                throw Gluon::Exceptions::StackTraceException("Failed to allocate new object via object_new");
+            }
+        }
+        else {
+            object = Gluon::Methods::createManualThrow(klass);
+        }
+
+        // Only need to extract based off of types, since we are assuming TOut is CLASS_OF-able anyway
+        static const MethodInfo *ctor = findMethod(klass, ".ctor",
+            std::array<const Il2CppType *, sizeof...(TArgs)>{ Gluon::Classes::extractIndependentType<std::decay_t<TArgs>>()... });
+
+        if (!ctor) {
+            throw Gluon::Exceptions::StackTraceException(std::format(
+                "Failed tro find matching .ctor during construction of type: {}",
+                Gluon::Classes::getClassStandardName(klass)
+                ));
+        }
+
+        Gluon::Methods::runMethodRethrow<void, false>(object, ctor, std::forward<TArgs>(args)... );
+
+        if constexpr (std::is_pointer_v<TOut>) {
+            return reinterpret_cast<TOut>(object);
+        }
+        else if constexpr (Gluon::TypeConcepts::HasIl2CppConversion<TOut>) {
+            // Handle construction for wrapper types, construct from void *s
+            return TOut(reinterpret_cast<void *>(object));
+        }
+        else {
+            static_assert(false_t<TOut>, "Cannot C# construct the provided value type that is not a wrapper type!");
+        }
+    }
+
+    template<class T, class ...TArgs>
+    concept CtorArgs = requires(T type, TArgs &&...args) {
+        { T::New_ctor(std::forward<TArgs>(args)...) }; // TODO: look into changing this for our cordl fork
+    };
+
+    template <class TOut, CreationType creationType = CreationType::Temporary, typename ...TArgs>
+    requires(CtorArgs<std::remove_pointer_t<TOut>, TArgs...>)
+    TOut newSpecific(TArgs &&...args) {
+        return Gluon::Methods::newSpecificUnsafe<TOut, creationType, TArgs...>(std::forward<TArgs>(args)...);
     }
 
 }
