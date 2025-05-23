@@ -37,7 +37,7 @@ namespace Gluon::Fields {
 
         FieldInfo *field = Gluon::Il2CppFunctions::class_get_field_from_name(klass, fieldName.data());
         if (!field) {
-            Gluon::Logger::error("Could not find field {} in class {}", fieldName.data,
+            Gluon::Logger::error("Could not find field {} in class {}", fieldName.data(),
                 Gluon::Classes::getClassStandardName(klass).c_str());
             // TODO: log fields
             if (klass->parent != klass) {

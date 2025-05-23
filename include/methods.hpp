@@ -421,7 +421,7 @@ namespace Gluon::Methods {
             }
         }
 
-        const void *inst = Gluon::Methods::extractValue(wrappedInstance);
+        void *inst = Gluon::Methods::extractValue(wrappedInstance);
 
         bool isStatic = method->flags & METHOD_ATTRIBUTE_STATIC;
         if (!isStatic && !inst) {
@@ -505,7 +505,7 @@ namespace Gluon::Methods {
         if (const auto exception = result.asOptionalException()) {
             Gluon::Logger::error("{}: failed with exception: {}",
                 Gluon::Il2CppFunctions::method_get_name(exception.value()->info),
-                Gluon::Exceptions::exceptionToString(exception.value()->ex).c_str());
+                Gluon::Exceptions::exceptionToString(exception.value()->exception).c_str());
             return std::nullopt;
         }
 
