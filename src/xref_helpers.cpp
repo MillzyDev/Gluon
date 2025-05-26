@@ -34,7 +34,7 @@ namespace Gluon::XrefHelpers {
                     return reinterpret_cast<uint32_t *>(op.imm);
                 default:
                     Gluon::Logging::Logger::warn("Unable to get CALL operand address for non-immediate.");
-                    break;
+                    return nullptr;
             }
         }
         return std::nullopt;
@@ -48,7 +48,7 @@ namespace Gluon::XrefHelpers {
                     return reinterpret_cast<uint32_t *>(op.imm);
                 default:
                     Gluon::Logging::Logger::warn("Unable to get JMP operand address for non-immediate.");
-                    break;
+                    return nullptr;
             }
         }
         return std::nullopt;
@@ -67,7 +67,7 @@ namespace Gluon::XrefHelpers {
                     return reinterpret_cast<uint32_t *>(insn->address + insn->size + op.mem.disp);
                 default:
                     Gluon::Logger::warn("Unable to get effective address for non-memory operand.");
-                    break;
+                    return nullptr;
             }
         }
         return std::nullopt;
@@ -90,6 +90,7 @@ namespace Gluon::XrefHelpers {
                     return reinterpret_cast<uint32_t *>(op.imm); // get address from immediate
                 default:
                     Gluon::Logger::warn("Unable to get address of source MOV operand; is not rip-relative address nor immediate.");
+                    return nullptr;
             }
         }
         return std::nullopt;
