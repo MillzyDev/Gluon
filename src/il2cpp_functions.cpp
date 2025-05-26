@@ -474,6 +474,7 @@ namespace Gluon {
 #ifdef UNITY_6000
         auto address = Gluon::XrefHelpers::findNthLea<6>(runtimeInit.value());
 #else
+        // this may be broken now; fixed an issue in findNthLea - if it does break, the fix should be to change 4 to 5
         auto address = Gluon::XrefHelpers::findNthLea<4>(runtimeInit.value());
 #endif
         if (!address) {
