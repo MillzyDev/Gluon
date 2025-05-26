@@ -327,17 +327,29 @@ namespace Gluon {
     }
 
     GLUON_HIDDEN uint32_t *traceGetTypeInfoFromTypeIndex() {
+        // UNITY 2021:
         // il2cpp_field_get_value_object // 1st JMP
         //     Field::GetValueObjectForThread // 5th CALL
         //         utils::BlobReader::GetConstrantValueFromBlob // 1st CALL
         //             BlobReader::GetConstantValueFromBlob // 10th CALL
+        //                 MetadataCache::GetTypeInfoFromTypeIndex
+
+        // UNITY 6:
+        // il2cpp_field_get_value_object: // 1st JMP
+        //     Field::GetValueObject // 4th CALL
+        //         BlobReader::GetConstantValueFromBlob // 1st CALL
+        //             BlobReader::GetConstantValueFromBlob // 16th CALL
         //                 MetadataCache::GetTypeInfoFromTypeIndex
         auto Field_GetValueObjectForThread = Gluon::XrefHelpers::findNthJmp<1, false, -1, 1024>(reinterpret_cast<uint32_t *>(Il2CppFunctions::il2cpp_field_get_value_object));
         if (!Field_GetValueObjectForThread) {
             SAFE_ABORT_MSG("Failed to find Field::GetValueObjectForThread!");
         }
 
+#ifdef UNITY_6000
+        auto BlobReader_GetConstantValueFromBlob = Gluon::XrefHelpers::findNthCall<4>(Field_GetValueObjectForThread.value());
+#else
         auto BlobReader_GetConstantValueFromBlob = Gluon::XrefHelpers::findNthCall<5>(Field_GetValueObjectForThread.value());
+#endif
         if (!BlobReader_GetConstantValueFromBlob) {
             SAFE_ABORT_MSG("Failed to find BlobReader::GetConstantValueFromBlob!");
         }
@@ -347,7 +359,12 @@ namespace Gluon {
             SAFE_ABORT_MSG("Failed to find BlobReader::GetConstantValueFromBlob2!");
         }
 
+#ifdef UNITY_6000
+        auto MetadataCache_GetTypeInfoFromTypeIndex = Gluon::XrefHelpers::findNthCall<16>(BlobReader_GetConstantValueFromBlob2.value());
+#else
         auto MetadataCache_GetTypeInfoFromTypeIndex = Gluon::XrefHelpers::findNthCall<10>(BlobReader_GetConstantValueFromBlob2.value());
+#endif
+
         if (!MetadataCache_GetTypeInfoFromTypeIndex) {
             SAFE_ABORT_MSG("Failed to find MetadataCache::GetTypeInfoFromTypeIndex!");
         }
@@ -454,7 +471,11 @@ namespace Gluon {
             SAFE_ABORT_MSG("Failed to find Runtime::Init!");
         }
 
+#ifdef UNITY_6000
+        auto address = Gluon::XrefHelpers::findNthLea<6>(runtimeInit.value());
+#else
         auto address = Gluon::XrefHelpers::findNthLea<4>(runtimeInit.value());
+#endif
         if (!address) {
             SAFE_ABORT_MSG("Failed to find effective address for defaults!");
         }

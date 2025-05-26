@@ -59,7 +59,7 @@ namespace Gluon::Properties {
         return Gluon::Properties::setPropertyValue<checkTypes>(classOrInstance, property, value);
     }
 
-    template <bool checkTypes = true, class T, class TArg>
+    template <bool checkTypes = true, class TArg>
     bool setPropertyValue(const std::string_view namespaze, const std::string_view className, const std::string_view propertyName, TArg &&value) {
         Gluon::Il2CppFunctions::initialise();
         Il2CppClass *klass = RET_0_UNLESS(Gluon::Classes::getClassFromName(namespaze, className));

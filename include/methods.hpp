@@ -120,7 +120,7 @@ namespace Gluon::Methods {
             if constexpr (std::is_base_of_v<Il2CppObject, std::remove_pointer_t<Dt>>) {
                 if (arg) {
                     Il2CppClass *klass = Gluon::Il2CppFunctions::object_get_class(reinterpret_cast<Il2CppObject *>(arg));
-#ifdef UNITY_2021
+#if defined(UNITY_2021) || defined(UNITY_2022) || defined(UNITY_6000)
                     if (klass && Gluon::Il2CppFunctions::class_is_valuetype(klass)) {
 #else // UNITY_2021
                     if (klass && klass->is_valuetype) {
@@ -254,14 +254,14 @@ namespace Gluon::Methods {
 
         // pyrocynical lol
         if (method->is_inflated) {
-#if UNITY_2021
+#if defined(UNITY_2021) || defined(UNITY_2022) || defined(UNITY_6000)
             return reinterpret_cast<const Il2CppGenericContainer *>(method->genericMethod->methodDefinition->genericContainerHandle);
 #else // UNITY_2021
             return method->genericMethod->methodDefinition->genericContainer;
 #endif // UNITY_2021
         }
 
-#if UNITY_2021
+#if defined(UNITY_2021) || defined(UNITY_2022) || defined(UNITY_6000)
         return reinterpret_cast<const Il2CppGenericContainer *>(method->genericContainerHandle);
 #else // UNITY_2021
             return method->genericContainer;

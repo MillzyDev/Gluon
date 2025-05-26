@@ -42,18 +42,25 @@ add_compile_definitions(
 set(IL2CPP_DIR "${UNITY_DIRECTORY}/Editor/Data/il2cpp/libil2cpp")
 message(STATUS ${IL2CPP_DIR})
 if (WIN32)
-    add_compile_definitions(
-            IL2CPP_TARGET_CUSTOM=1
-            IL2CPP_TARGET_WINDOWS=1
-            IL2CPP_TARGET_WINDOWS_DESKTOP=1
+    if (${UNITY_MAJOR} GREATER_EQUAL 6000)
+        include_directories("${CMAKE_SOURCE_DIR}/platform")
+        add_compile_definitions(
+                IL2CPP_USE_PLATFORM_CONFIG=1
+        )
+    else ()
+        add_compile_definitions(
+                IL2CPP_TARGET_CUSTOM=1
+                IL2CPP_TARGET_WINDOWS=1
+                IL2CPP_TARGET_WINDOWS_DESKTOP=1
 
-            IL2CPP_PLATFORM_SUPPORTS_SYSTEM_CERTIFICATES=1
-            IL2CPP_PLATFORM_SUPPORTS_CPU_INFO=1
+                IL2CPP_PLATFORM_SUPPORTS_SYSTEM_CERTIFICATES=1
+                IL2CPP_PLATFORM_SUPPORTS_CPU_INFO=1
 
-            _UNICODE=1
-            UNICODE=1
-            STRICT=1
-    )
+                _UNICODE=1
+                UNICODE=1
+                STRICT=1
+        )
+    endif ()
 endif ()
 
 add_library(Gluon SHARED)

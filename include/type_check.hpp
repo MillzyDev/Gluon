@@ -134,10 +134,10 @@ namespace Gluon::TypeCheck {
     };
 
     static Il2CppClass *getGenericTemplateClass(Il2CppGenericClass *genericClass) {
-#ifdef UNITY_2021
+#if defined(UNITY_2021) || defined(UNITY_2022) || defined(UNITY_6000)
         return CRASH_UNLESS(Gluon::Il2CppFunctions::type_get_class_or_element_class(genericClass->type));
 #else // UNITY_2021
-        return CRASH_UNLESS(Gluon::Il2CppFunctions::MetadataCache_GetTypeInfoFromTypeDefinitionIndex(genericClass->type));
+        return CRASH_UNLESS(Gluon::Il2CppFunctions::MetadataCache_GetTypeInfoFromTypeDefinitionIndex(genericClass->typeDefinitionIndex));
 #endif // UNITY_2021
     }
 
