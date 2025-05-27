@@ -39,7 +39,7 @@ namespace Gluon::Fields {
         RET_NULLOPT_UNLESS(field);
 
         const Il2CppType *outType = Gluon::Classes::extractIndependentType<TOut>();
-        if (!outType && !Gluon::Methods::isConvertibleFrom(outType, field->type, false)) {
+        if (outType && !Gluon::Methods::isConvertibleFrom(outType, field->type, false)) {
             Gluon::Logger::warn("Requested TOut {} does not match field type {}",
                 Gluon::Classes::getTypeSimpleName(outType), Gluon::Classes::getTypeSimpleName(field->type));
         }

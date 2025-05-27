@@ -461,7 +461,7 @@ namespace Gluon::Methods {
         if constexpr (!std::is_same_v<void, TOut>) {
             if constexpr (Gluon::TypeCheck::NeedBox<TOut>::value) { // returned value is boxed
                 auto retValue = Gluon::Boxing::unbox<TOut>(ret);
-                Gluon::Il2CppFunctions::il2cpp_gc_free_fixed(retValue);
+                Gluon::Il2CppFunctions::il2cpp_gc_free_fixed(ret);
                 return retValue;
             }
             else if constexpr (Gluon::TypeConcepts::Il2CppReferenceTypeWrapper<TOut>) { // returned value is a reference type

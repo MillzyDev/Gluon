@@ -485,7 +485,7 @@ namespace Gluon::TypeCheck {
         static const Il2CppType *get() {
             const Il2CppClass *klass = Il2CppNoArgClass<T>::get();
             if (klass) {
-                return &klass->byval_arg;
+                return &klass->this_arg;
             }
             return nullptr;
         }
@@ -494,7 +494,7 @@ namespace Gluon::TypeCheck {
     template <typename T>
     struct GLUON_HIDDEN Il2CppNoArgType<T const &> {
         static const Il2CppType *get() {
-            return Il2CppNoArgClass<T>::get();
+            return Il2CppNoArgType<T>::get();
         }
     };
 

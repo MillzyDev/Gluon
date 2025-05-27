@@ -26,7 +26,7 @@ namespace Gluon::Properties {
     std::optional<TOut> getPropertyValue(T &&classOrInstance, const PropertyInfo *property) {
         Gluon::Il2CppFunctions::initialise();
         const MethodInfo *getter = RET_NULLOPT_UNLESS(Gluon::Il2CppFunctions::property_get_get_method(property));
-        return Gluon::Methods::runMethod<TOut, checkTypes>(classOrInstance, getter);
+        return Gluon::Methods::runMethod<TOut, checkTypes>(classOrInstance, getter).intoOptionalResult();
     }
 
     template <class TOut = Il2CppObject *, bool checkTypes = true, class T>
@@ -49,7 +49,7 @@ namespace Gluon::Properties {
         RET_0_UNLESS(property);
 
         const MethodInfo *setter = RET_0_UNLESS(Gluon::Il2CppFunctions::property_get_set_method(property));
-        return static_cast<bool>(Gluon::Methods::runMethod<Il2CppObject *, checkTypes>(classOrInstance, setter, value));
+        return static_cast<bool>(Gluon::Methods::runMethod<Il2CppObject *, checkTypes>(classOrInstance, setter, value).getResult());
     }
 
     template <bool checkTypes = true, class T, class TArg>
