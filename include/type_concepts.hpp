@@ -94,6 +94,14 @@ namespace Gluon::TypeConcepts {
     template <class T>
     concept Il2CppValueType = Gluon::TypeConcepts::ValueDecompose<T>::value || Gluon::TypeConcepts::ValueTypeTrait<T>::value;
 
+    template <class T, class Enable = void>
+    struct GLUON_HIDDEN IsValueType : std::integral_constant<
+        bool, (std::is_arithmetic_v<T> || std::is_enum_v<T> || std::is_pointer_v<T> || std::is_standard_layout_v<T>) && !std::is_base_of_v<Il2CppObject, T>
+    > {};
+
+    template <class T>
+    constexpr bool is_value_type_v = Gluon::TypeConcepts::IsValueType<T>::value;
+
     template <typename T>
     concept Il2CppReferenceTypeWrapperRequirements = requires(const T &type) {
         { type.convert() } -> ConvertibleTo<void *>;
