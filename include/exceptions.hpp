@@ -19,7 +19,7 @@ namespace Gluon::Exceptions {
         void *stackTraceBuffer[kStackTraceMaxSize];
         uint16_t stackTraceSize;
 
-        explicit StackTraceException(std::string_view message) : std::runtime_error(message.data()) { // NOLINT(*-pro-type-member-init)
+        explicit StackTraceException(const std::string_view message) : std::runtime_error(message.data()) { // NOLINT(*-pro-type-member-init)
             stackTraceSize = Gluon::BacktraceHelpers::captureBacktrace(stackTraceBuffer, kStackTraceMaxSize, 0);
         }
 
@@ -31,13 +31,13 @@ namespace Gluon::Exceptions {
         }
     };
 
-    struct NullException : public StackTraceException {
+    struct NullException final : public StackTraceException {
         using StackTraceException::StackTraceException;
 
-        NullException(std::string_view message) : StackTraceException(message) {}
+        explicit NullException(const std::string_view message) : StackTraceException(message) {}
     };
 
-    struct BadCastException : public StackTraceException {
+    struct BadCastException final : public StackTraceException {
         using StackTraceException::StackTraceException;
         const Il2CppClass *klass;
         const Il2CppClass *targetClass;
@@ -55,11 +55,11 @@ namespace Gluon::Exceptions {
 
     [[noreturn]] GLUON_API void raiseException(const Il2CppException *exception);
 
-    struct ResultException : StackTraceException {
-        ResultException(std::string_view  message) : StackTraceException(message) {}
+    struct ResultException final : StackTraceException {
+        explicit ResultException(const std::string_view message) : StackTraceException(message) {}
     };
 
-    struct RunMethodException : std::runtime_error {
+    struct RunMethodException final : std::runtime_error {
         constexpr static uint16_t kStackTraceSize = 256;
 
         const Il2CppException *exception;
@@ -67,13 +67,13 @@ namespace Gluon::Exceptions {
         void *stackTraceBuffer[kStackTraceSize];
         uint16_t stackTraceSize;
 
-        RunMethodException(std::string_view message, const MethodInfo *info) __attribute__((noinline)) : std::runtime_error(
-                message.data()), exception(nullptr), info(info) {
+        RunMethodException(const std::string_view message, const MethodInfo *info) __attribute__((noinline)) : std::runtime_error(
+                                                                                                                   message.data()), exception(nullptr), info(info) {
             stackTraceSize = Gluon::BacktraceHelpers::captureBacktrace(stackTraceBuffer, kStackTraceSize, 0);
         }
 
-        RunMethodException(Il2CppException *exception, const MethodInfo *info) __attribute__((noinline)) : std::runtime_error(
-                exceptionToString(exception)), exception(exception), info(info) {
+        RunMethodException(const Il2CppException *exception, const MethodInfo *info) __attribute__((noinline)) : std::runtime_error(
+                                                                                                                     exceptionToString(exception)), exception(exception), info(info) {
             stackTraceSize = Gluon::BacktraceHelpers::captureBacktrace(stackTraceBuffer, kStackTraceSize, 0);
         }
 
@@ -89,7 +89,11 @@ namespace Gluon::Exceptions {
         }
     };
 
-
+    /// @brief Represents an exception thrown from usage of an Array.
+    struct ArrayException final : Gluon::Exceptions::StackTraceException {
+        void* arrayInstance;
+        ArrayException(void* instance, const std::string_view msg) : Gluon::Exceptions::StackTraceException(msg.data()), arrayInstance(instance) {}
+    };
 }
 
 #endif // GLUON_EXCEPTIONS_HPP_
