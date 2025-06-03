@@ -20,6 +20,11 @@
 #include "type_concepts.hpp"
 #include "wrappers_object.hpp"
 
+/**
+* Methods in here will deviate from the styling convention, this is because of keyword conflicts, as well as these
+* types/methods being intended to represent C# entities in C++ land.
+*/
+
 namespace Gluon {
     template<class T, class U>
     /// @brief If type T can be assigned to by type U&&
