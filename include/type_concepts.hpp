@@ -4,6 +4,36 @@
 #include <concepts>
 #include <type_traits>
 
+#define MARK_REF_T(...)                                                                                                          \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::RefTypeTrait<__VA_ARGS__> { static constexpr bool value = true; };       \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::ValueTypeTrait<__VA_ARGS__> { static constexpr bool value = false; };    \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::RefPtrTypeTrait<__VA_ARGS__> { static constexpr bool value = false; }
+
+#define MARK_REF_PTR_T(...)                                                                                                      \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::RefTypeTrait<__VA_ARGS__> { static constexpr bool value = false; };      \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::ValueTypeTrait<__VA_ARGS__> { static constexpr bool value = false; };    \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::RefPtrTypeTrait<__VA_ARGS__> { static constexpr bool value = true; }
+
+#define MARK_VAL_T(...)                                                                                                          \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::RefTypeTrait<__VA_ARGS__> { static constexpr bool value = false; };      \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::ValueTypeTrait<__VA_ARGS__> { static constexpr bool value = true; };     \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::RefPtrTypeTrait<__VA_ARGS__> { static constexpr bool value = false; }
+
+#define MARK_GEN_REF_T(...)                                                                                                      \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::GenRefTypeTrait<__VA_ARGS__> { static constexpr bool value = true; };    \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::GenValueTypeTrait<__VA_ARGS__> { static constexpr bool value = false; }; \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::GenRefPtrTypeTrait<__VA_ARGS__> { static constexpr bool value = false; }
+
+#define MARK_GEN_REF_PTR_T(...)                                                                                                   \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::GenRefTypeTrait<__VA_ARGS__> { static constexpr bool value = false; };     \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::GenValueTypeTrait<__VA_ARGS__> { static constexpr bool value = false; };  \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::GenRefPtrTypeTrait<__VA_ARGS__> { static constexpr bool value = true; }
+
+#define MARK_GEN_VAL_T(...)                                                                                                          \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::GenRefTypeTrait<__VA_ARGS__> { static constexpr bool value = true; };       \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::GenValueTypeTrait<__VA_ARGS__> { static constexpr bool value = false; };    \
+    template<> struct GLUON_HIDDEN Gluon::TypeConcepts::GenRefPtrTypeTrait<__VA_ARGS__> { static constexpr bool value = false; }
+
 namespace Gluon::TypeConcepts {
     template <typename T, typename U>
     concept ConvertibleTo = std::is_convertible_v<T, U>;
