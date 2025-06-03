@@ -3,16 +3,16 @@
 
 #include <concepts>
 #include <cstddef>
+#include <initializer_list>
 #include <iterator>
 #include <optional>
+#include <ranges>
+#include <span>
+#include <stdexcept>
+#include <sstream>
 #include <type_traits>
 #include <utility>
 #include <vector>
-#include <span>
-#include <ranges>
-#include <stdexcept>
-#include <initializer_list>
-#include <sstream>
 
 #include "exceptions.hpp"
 #include "methods.hpp"
