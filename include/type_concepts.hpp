@@ -60,6 +60,41 @@ namespace Gluon::TypeConcepts {
     constexpr bool value_marker_check_v = ValueMarkerCheck<T, check>::value;
 
     template <typename T>
+    concept Il2CppValueTypeRequirements = requires (T const &t) {
+        requires std::is_same_v<decltype(t.instance), std::array<std::byte, sizeof(t.instance)>>;
+        requires std::is_constructible_v<T, decltype(t.instance)>;
+        requires Gluon::TypeConcepts::value_marker_check_v<T, true>;
+    };
+
+    template <class T>
+    struct ValueTypeTrait {
+        static constexpr bool value = false;
+    };
+
+    template <Il2CppValueTypeRequirements T>
+    struct ValueTypeTrait<T> {
+        static constexpr bool value = true;
+    };
+
+    template <template <class...> class T>
+    struct GenValueTypeTrait {
+        static constexpr bool value = false;
+    };
+
+    template <class T>
+    struct ValueDecompose {
+        static constexpr bool value = false;
+    };
+
+    template <template <class...> class T, class ...TArgs>
+    struct ValueDecompose<T<TArgs...>> {
+        static constexpr bool value = Gluon::TypeConcepts::GenValueTypeTrait<T>::value;
+    };
+
+    template <class T>
+    concept Il2CppValueType = Gluon::TypeConcepts::ValueDecompose<T>::value || Gluon::TypeConcepts::ValueTypeTrait<T>::value;
+
+    template <typename T>
     concept Il2CppReferenceTypeWrapperRequirements = requires(const T &type) {
         { type.convert() } -> ConvertibleTo<void *>;
 
