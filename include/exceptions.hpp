@@ -94,6 +94,12 @@ namespace Gluon::Exceptions {
         void* arrayInstance;
         ArrayException(void* instance, const std::string_view msg) : Gluon::Exceptions::StackTraceException(msg.data()), arrayInstance(instance) {}
     };
+
+    /// @brief Represents an exception thrown from usage of a List
+    struct ListException final : Gluon::Exceptions::StackTraceException {
+        void* arrayInstance;
+        ListException(void* instance, const std::string_view msg) : Gluon::Exceptions::StackTraceException(msg.data()), arrayInstance(instance) {}
+    };
 }
 
 #endif // GLUON_EXCEPTIONS_HPP_
