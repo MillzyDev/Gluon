@@ -100,6 +100,10 @@ namespace Gluon::Exceptions {
         void* arrayInstance;
         ListException(void* instance, const std::string_view msg) : Gluon::Exceptions::StackTraceException(msg.data()), arrayInstance(instance) {}
     };
+
+    struct UseBeforeInitError : Gluon::Exceptions::StackTraceException {
+        UseBeforeInitError(const char* v) : Gluon::Exceptions::StackTraceException(v) {}
+    };
 }
 
 #endif // GLUON_EXCEPTIONS_HPP_
