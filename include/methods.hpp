@@ -512,6 +512,26 @@ namespace Gluon::Methods {
         return result.getResult();
     }
 
+    template <typename TOut = Il2CppObject *, CreationType creationType = CreationType::Temporary, typename ...TArgs>
+    std::optional<TOut> newObject(Il2CppClass *klass, TArgs &&...args) {
+        Gluon::Il2CppFunctions::initialise();
+
+        Il2CppObject *object;
+        if constexpr (creationType == CreationType::Temporary) {
+            // object_new call
+            object = RET_NULLOPT_UNLESS(Gluon::Il2CppFunctions::object_new(klass));
+        }
+        else {
+            object = RET_NULLOPT_UNLESS(Gluon::Methods::createManual(klass));
+        }
+
+        // runtime_invoke ctor with right type(s) of arguments, return null if constructor errors
+        std::array<const Il2CppType *, sizeof...(TArgs)> types{ Gluon::Classes::extractType(args)... };
+        const MethodInfo *method = RET_NULLOPT_UNLESS(Gluon::Methods::findMethod(klass, ".ctor", types));
+        RET_NULLOPT_UNLESS(Gluon::Methods::runMethodOpt(object, method, std::forward<TArgs>(args)...));
+        return Gluon::Classes::fromIl2CppObject<TOut>(object);
+    }
+
     /**
      * Allocates a new instance of a particular Il2CppClass *, either allowing it to be GC'd normally or manually controlled.
      * The Il2CppClass * is derived from the TOut template parameter.
