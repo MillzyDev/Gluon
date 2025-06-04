@@ -52,8 +52,10 @@
 #define DEFINE_IL2CPP_ARG_TYPE_GENERIC_CLASS(templateType, namespaze, name)                 \
     template <>                                                                             \
     struct GLUON_HIDDEN Gluon::TypeCheck::Il2CppGenClassNoArgClass<templateType> {          \
-        static Il2CppClass *klass = Gluon::Classes::getClassFromName(namespaze, name);      \
-        return klass;                                                                       \
+        static inline Il2CppClass *get() {                                                  \
+            static Il2CppClass *klass = Gluon::Classes::getClassFromName(namespaze, name);  \
+            return klass;                                                                   \
+        }                                                                                   \
     };                                                                                      \
     template <>                                                                             \
     struct GLUON_HIDDEN Gluon::TypeCheck::NeedBoxGen<templateType> {                        \
