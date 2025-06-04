@@ -6,7 +6,6 @@
 #include <unistd.h>
 
 #include "backtrace_helpers.hpp"
-#include "exceptions.hpp"
 #include "gluon_logging.hpp"
 
 #define CRASH_UNLESS(...) Gluon::crashUnless(__VA_ARGS__, __PRETTY_FUNCTION__, __FILE__, __LINE__)
@@ -86,10 +85,12 @@ namespace Gluon {
         return unwrapOptionals(arg);
     }
 
+    [[noreturn]] void throwException(const std::string &message);
+
     template <class TArg>
     auto throwUnless(TArg &&arg, const char *func, const char *file, int line) {
         if (!arg) {
-            throw Gluon::Exceptions::StackTraceException(std::format("Throwing in {} at {}:{}", func, file, line));
+            throwException(std::format("Throwing in {} at {}:{}", func, file, line));
         }
 
         return unwrapOptionals(arg);
