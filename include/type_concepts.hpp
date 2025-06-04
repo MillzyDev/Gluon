@@ -195,7 +195,8 @@ namespace Gluon::TypeConcepts {
     template <class T>
     concept Il2CppReferenceTypePointer = std::is_pointer_v<T> && (RefPtrDecompose<std::remove_pointer_t<T>>::value || RefPtrTypeTrait<std::remove_pointer_t<T>>::value);
 
-
+    template <class T>
+    concept Il2CppReferenceType = Gluon::TypeConcepts::Il2CppReferenceTypeWrapper<T> || Gluon::TypeConcepts::Il2CppReferenceTypePointer<T>;
 }
 
 #endif
