@@ -6,11 +6,13 @@
 #include <unistd.h>
 
 #include "backtrace_helpers.hpp"
+#include "exceptions.hpp"
 #include "gluon_logging.hpp"
 
 #define CRASH_UNLESS(...) Gluon::crashUnless(__VA_ARGS__, __PRETTY_FUNCTION__, __FILE__, __LINE__)
 #define SAFE_ABORT() Gluon::safeAbort(__PRETTY_FUNCTION__, __FILE__, __LINE__)
 #define SAFE_ABORT_MSG(...) Gluon::safeAbortMsg(__PRETTY_FUNCTION__, __FILE__, __LINE__, __VA_ARGS__)
+#define THROW_UNLESS(...) Gluon::throwUnless(__VA_ARGS__, __PRETTY_FUNCTION__, __FILE__, __LINE__)
 
 #define RET_UNLESS(retval, ...) ({      \
     auto&& __temp__ = (__VA_ARGS__);    \
@@ -81,6 +83,15 @@ namespace Gluon {
         if (!arg) {
             Gluon::safeAbort(func, file, line);
         }
+        return unwrapOptionals(arg);
+    }
+
+    template <class TArg>
+    auto throwUnless(TArg &&arg, const char *func, const char *file, int line) {
+        if (!arg) {
+            throw Gluon::Exceptions::StackTraceException(std::format("Throwing in {} at {}:{}", func, file, line));
+        }
+
         return unwrapOptionals(arg);
     }
 }
