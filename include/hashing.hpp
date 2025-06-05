@@ -1,10 +1,11 @@
 #ifndef GLUON_HASHING_HPP_
 #define GLUON_HASHING_HPP_
 
-#include <cstdint>
+#include <cstddef>
 #include <utility>
 
 #include "methods.hpp"
+#include "wrappers_pointer.hpp"
 
 namespace Gluon::Hashing {
     class HashPair {
@@ -57,6 +58,14 @@ namespace std {
             constexpr auto hashStr = std::hash<std::string_view>{};
 
             return hashPtr(info.klass) ^ hashStr(info.name) ^ hashSize(info.argTypes.size()) ^ hashSize(info.genericTypes.size());
+        }
+    };
+
+    template <typename R, typename T, typename... TArgs>
+    struct hash<Gluon::AbstractFunction<R(T*, TArgs...)>> {
+        std::size_t operator()(const Gluon::AbstractFunction<R(T*, TArgs...)>& obj) const noexcept {
+            auto seed = std::hash<void*>{}(obj.instance());
+            return seed ^ std::hash<void*>{}(reinterpret_cast<void*>(obj.ptr())) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         }
     };
 }
