@@ -101,8 +101,20 @@ namespace Gluon::Exceptions {
         ListException(void* instance, const std::string_view msg) : Gluon::Exceptions::StackTraceException(msg.data()), arrayInstance(instance) {}
     };
 
-    struct UseBeforeInitError : Gluon::Exceptions::StackTraceException {
-        UseBeforeInitError(const char* v) : Gluon::Exceptions::StackTraceException(v) {}
+    struct UseBeforeInitError final : Gluon::Exceptions::StackTraceException {
+        explicit UseBeforeInitError(const char* v) : Gluon::Exceptions::StackTraceException(v) {}
+    };
+
+    struct CreatedTooEarlyException final : Gluon::Exceptions::StackTraceException {
+        CreatedTooEarlyException() : Gluon::Exceptions::StackTraceException("A SafePtr<T> instance was created too early or a necessary GC function was not found!") {}
+    };
+
+    struct NullHandleException final : Gluon::Exceptions::StackTraceException {
+        NullHandleException() : Gluon::Exceptions::StackTraceException("A SafePtr<T> instance is holding a null handle!") {}
+    };
+
+    struct TypeCastException final : Gluon::Exceptions::StackTraceException {
+        TypeCastException() : Gluon::Exceptions::StackTraceException("The type could not be cast safely! Check your SafePtr/CountPointer cast calls!") {}
     };
 }
 
