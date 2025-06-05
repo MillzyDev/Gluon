@@ -3,6 +3,7 @@
 #include "wrappers_disposal.hpp"
 #include "wrappers_list.hpp"
 #include "wrappers_string.hpp"
+#include "wrappers.hpp"
 
 #include "classes.hpp"
 #include "type_check.hpp"
