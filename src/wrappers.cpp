@@ -8,6 +8,10 @@
 #include "classes.hpp"
 #include "type_check.hpp"
 
+#include "byref.hpp"
+#include "wrappers_enum.hpp"
+#include "wrappers_value.hpp"
+
 namespace Gluon::Detail {
     template <class Facet>
     struct DeletableFacet : Facet {
