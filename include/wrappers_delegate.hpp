@@ -1,5 +1,5 @@
 #ifndef GLUON_WRAPPERS_DELEGATE_HPP_
-#define GLUON_WRAPEPRS_DELEGATE_HPP_
+#define GLUON_WRAPPERS_DELEGATE_HPP_
 
 #include "wrappers_object.hpp"
 
