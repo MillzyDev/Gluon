@@ -9,6 +9,7 @@
 #include "il2cpp_functions.hpp"
 #include "methods.hpp"
 #include "type_check.hpp"
+#include "wrapper_base.hpp"
 #include "wrappers_array.hpp"
 #include "wrappers_delegate.hpp"
 #include "wrappers_string.hpp"
