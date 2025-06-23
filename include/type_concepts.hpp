@@ -197,6 +197,18 @@ namespace Gluon::TypeConcepts {
 
     template <class T>
     concept Il2CppReferenceType = Gluon::TypeConcepts::Il2CppReferenceTypeWrapper<T> || Gluon::TypeConcepts::Il2CppReferenceTypePointer<T>;
+
+    template <Il2CppReferenceType T>
+    inline static constexpr void *il2cppReferenceTypeValue(T &&t) {
+        if constexpr (Il2CppReferenceTypeWrapper<T>) {
+            return t.convert();
+        }
+        else if constexpr (Il2CppReferenceTypePointer<T>) {
+            return t;
+        }
+
+        return nullptr;
+    }
 }
 
 #endif
