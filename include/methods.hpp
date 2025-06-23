@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <optional>
 #include <ranges>
+#include <span>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -36,15 +37,17 @@ namespace Gluon::Methods {
     struct FindMethodInfo {
         Il2CppClass *klass = nullptr;
         std::string name;
-        std::vector<const Il2CppClass *const> genericTypes;
-        std::vector<const Il2CppType *const> argTypes;
+        std::vector<const Il2CppClass *> genericTypes;
+        std::vector<const Il2CppType *> argTypes;
 
         constexpr FindMethodInfo() = delete;
         constexpr FindMethodInfo(FindMethodInfo &&) = default;
         constexpr FindMethodInfo(FindMethodInfo const &) = delete;
-        constexpr FindMethodInfo(Il2CppClass *klass, std::string_view name,
-            std::span<const Il2CppClass *const> genericTypes, std::span<const Il2CppType *const> argTypes)
-                : klass(klass), name(name), genericTypes(genericTypes.begin(), genericTypes.end()),
+        constexpr FindMethodInfo(Il2CppClass *klass, std::string_view const name,
+            std::span<const Il2CppClass *> genericTypes, std::span<const Il2CppType *> argTypes)
+                : klass(klass),
+                  name(name.begin(), name.end()),
+                  genericTypes(genericTypes.begin(), genericTypes.end()),
                   argTypes(argTypes.begin(), argTypes.end()) {}
 
         bool operator==(const FindMethodInfo & other) const {
@@ -56,16 +59,15 @@ namespace Gluon::Methods {
                 return false;
             }
 
-            const bool isArgTypesEqual =
-                this->argTypes.size() == other.argTypes.size() &&
-                std::ranges::equal(this->argTypes, other.argTypes);
+            const bool isArgTypesEqual = this->argTypes.size() == other.argTypes.size() &&
+                std::equal(this->argTypes.begin(), this->argTypes.end(), other.argTypes.begin(), other.argTypes.end());
             if (!isArgTypesEqual) {
                 return false;
             }
 
             const bool isGenericTypesEqual =
                 this->genericTypes.size() == other.genericTypes.size() &&
-                std::ranges::equal(this->genericTypes, other.genericTypes);
+                    std::equal(this->genericTypes.begin(), this->genericTypes.end(), other.genericTypes.begin(), other.genericTypes.end());
             if (!isGenericTypesEqual) {
                 return false;
             }
@@ -203,11 +205,11 @@ namespace Gluon::Methods {
 
     // helper constructor
     template<typename T, typename TGenerics, typename TArgs>
-    requires(!std::is_convertible_v<T, std::string_view> && std::is_constructible_v<std::span<const Il2CppClass *const>, TGenerics> && std::is_constructible_v<std::span<const Il2CppType *const>, TArgs>)
+    requires(!std::is_convertible_v<T, std::string_view> && std::is_constructible_v<std::span<const Il2CppClass *>, TGenerics> && std::is_constructible_v<std::span<const Il2CppType *>, TArgs>)
     const MethodInfo *findMethod(T &&instanceOrClass, std::string_view methodName, TGenerics &&genericTypes, TArgs&&argTypes) {
         Il2CppClass *klass = Gluon::Classes::extractClass(std::forward<T>(instanceOrClass));
-        const auto genericTypesSpan = std::span<const Il2CppClass *const>(std::forward<TGenerics>(genericTypes));
-        const auto argTypesSpan = std::span<const Il2CppType *const>(std::forward<TArgs>(argTypes));
+        const auto genericTypesSpan = std::span<const Il2CppClass *>(std::forward<TGenerics>(genericTypes));
+        const auto argTypesSpan = std::span<const Il2CppType *>(std::forward<TArgs>(argTypes));
         return Gluon::Methods::findMethod(FindMethodInfo(klass, methodName, genericTypesSpan, argTypesSpan));
     }
 
@@ -222,7 +224,7 @@ namespace Gluon::Methods {
     template <typename T>
     requires(!std::is_constructible_v<T, std::string_view>)
     const MethodInfo *findMethod(T &&instanceOrClass, std::string_view methodName) {
-        return Gluon::Methods::findMethod(std::forward<T>(instanceOrClass), methodName, std::span<const Il2CppClass *const>(), std::span<const Il2CppType *const>());
+        return Gluon::Methods::findMethod(std::forward<T>(instanceOrClass), methodName, std::span<const Il2CppClass *>(), std::span<const Il2CppType *>());
     }
 
     // generic and array args
@@ -236,13 +238,13 @@ namespace Gluon::Methods {
     template <typename TArgs>
     const MethodInfo *findMethod(const std::string_view namespaze, const std::string_view className, std::string_view methodName, TArgs &&argTypes) {
         Il2CppClass *klass = Gluon::Classes::getClassFromName(namespaze, className);
-        return Gluon::Methods::findMethod(klass, methodName, std::span<const Il2CppClass *const>(), std::forward<TArgs>(argTypes));
+        return Gluon::Methods::findMethod(klass, methodName, std::span<const Il2CppClass *>(), std::forward<TArgs>(argTypes));
     }
 
     // no args
     inline const MethodInfo *findMethod(const std::string_view namespaze, const std::string_view className, std::string_view methodName) {
         Il2CppClass *klass = Gluon::Classes::getClassFromName(namespaze, className);
-        return Gluon::Methods::findMethod(klass, methodName, std::span<const Il2CppClass *const>(), std::span<const Il2CppType *const>());
+        return Gluon::Methods::findMethod(klass, methodName, std::span<const Il2CppClass *>(), std::span<const Il2CppType *>());
     }
 
     bool isConvertibleFrom(const Il2CppType *to, const Il2CppType *from, bool asArgs = true);
@@ -283,8 +285,8 @@ namespace Gluon::Methods {
      * @param isIdenticalOut is true if every parameter type matches identically. Can be null
      */
     template <std::size_t genericsCount, std::size_t argsCount>
-    bool parameterMatch(const MethodInfo *method, const std::span<const Il2CppClass *const, genericsCount> genericTypes,
-                        const std::span<const Il2CppType *const, argsCount> argTypes,
+    bool parameterMatch(const MethodInfo *method, const std::span<const Il2CppClass *, genericsCount> genericTypes,
+                        const std::span<const Il2CppType *, argsCount> argTypes,
                         const std::optional<bool *> isIdenticalOut) {
 
         Gluon::Il2CppFunctions::initialise();
@@ -366,9 +368,9 @@ namespace Gluon::Methods {
     }
 
     template <std::size_t argsCount>
-    bool parameterMatch(const MethodInfo *method, const std::span<const Il2CppType *const, argsCount> argTypes,
+    bool parameterMatch(const MethodInfo *method, const std::span<const Il2CppType *, argsCount> argTypes,
                         const std::optional<bool *> isIdenticalOut) {
-        return Gluon::Methods::parameterMatch<0, argsCount>(method, std::span<const Il2CppClass *const, 0>(), argTypes, isIdenticalOut);
+        return Gluon::Methods::parameterMatch<0, argsCount>(method, std::span<const Il2CppClass *, 0>(), argTypes, isIdenticalOut);
     }
 
     template <bool strictEqual = false, std::size_t genericsCount, std::size_t argsCount>
@@ -380,7 +382,7 @@ namespace Gluon::Methods {
     template <bool strictEqual = false, size_t argsCount>
     bool parameterMatch(const MethodInfo *method, std::array<const Il2CppType *, argsCount> const &argTypes,
                         std::optional<bool *> isIdenticalOut) {
-        return Gluon::Methods::parameterMatch<0, argsCount>(method, std::span<const Il2CppClass *const, 0>(), argTypes, isIdenticalOut);
+        return Gluon::Methods::parameterMatch<0, argsCount>(method, std::span<const Il2CppClass *, 0>(), argTypes, isIdenticalOut);
     }
 
     template <typename TOut>

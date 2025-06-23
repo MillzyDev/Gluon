@@ -652,7 +652,7 @@ namespace Gluon {
     };
 
     template <typename T, template <typename U = T> typename Wrapper>
-    ListWrapper(Wrapper<T>) -> Gluon::ListWrapper<T, Wrapper<T>>;
+    ListWrapper(Wrapper<T>) -> ListWrapper<T, Wrapper<T>>;
 
     // if system list exists, we can use it in ListW, but with a compile definition
     // it can be disabled

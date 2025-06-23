@@ -11,7 +11,7 @@ namespace Gluon {
     struct ByRef {
         constexpr ByRef(T &value) noexcept : heldReference(value) {}
 
-        explicit constexpr ByRef(void *) noexcept : heldReference(*reinterpret_cast<T*>(value)) {}
+        explicit constexpr ByRef(void *value) noexcept : heldReference(*static_cast<T*>(value)) {}
 
         T &heldReference;
 
