@@ -8,9 +8,12 @@
 #include <string>
 
 #include "backtrace_helpers.hpp"
-#include "classes.hpp"
 
 #include "il2cpp-class-internals.h"
+
+namespace Gluon::Classes {
+    extern std::string getClassStandardName(const Il2CppClass *klass, bool generics);
+}
 
 namespace Gluon::Exceptions {
     struct StackTraceException : std::runtime_error {

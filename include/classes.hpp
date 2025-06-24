@@ -6,6 +6,7 @@
 #include <string>
 #include <type_traits>
 
+#include "exceptions.hpp"
 #include "gc.hpp"
 #include "gluon_config.hpp"
 #include "gluon_logging.hpp"
@@ -111,6 +112,57 @@ namespace Gluon::Classes {
     GLUON_API Il2CppClass *makeGeneric(const Il2CppClass *klass, const Il2CppType **types, std::uint32_t count);
 
     GLUON_API Il2CppClass *getClassFromName(std::string_view namespaze, std::string_view name);
+
+    template <class U, class T>
+    [[nodiscard]] U *cast(T *from) {
+        static Il2CppClass *class1 = CLASS_OF(U *);
+
+        if (!class1) {
+            throw Gluon::Exceptions::NullException("Cannot cast null target class");
+        }
+
+        if (!from) {
+            throw Gluon::Exceptions::NullException("Cannot cast null instance");
+        }
+
+        Il2CppClass *class2 = *reinterpret_cast<Il2CppClass **>(from);
+
+        if (!class2) {
+            throw Gluon::Exceptions::NullException("Cannot cast null class");
+        }
+
+        if (class1 != class2 && !Gluon::Il2CppFunctions::class_is_assignable_from(class1, class2)) {
+            throw Gluon::Exceptions::BadCastException(class1, class2, reinterpret_cast<Il2CppObject *>(from));
+        }
+
+        return reinterpret_cast<U *>(from);
+    }
+
+    template <typename U, typename T>
+    [[nodiscard]] U &castRef(T &from) {
+        return *Gluon::Classes::cast<U, T>(std::addressof(from));
+    }
+
+    template <typename U, typename T>
+    [[nodiscard]] std::optional<U *> tryCast(T *from) {
+        static Il2CppClass *class1 = CLASS_OF(U *);
+
+        if (!class1 || !from) {
+            return std::nullopt;
+        }
+
+        Il2CppClass *class2 = *reinterpret_cast<Il2CppClass **>(from);
+
+        if (!class2) {
+            return std::nullopt;
+        }
+
+        if (class1 == class2 || Gluon::Il2CppFunctions::class_is_assignable_from(class1, class2)) {
+            return reinterpret_cast<U *>(from);
+        }
+
+        return std::nullopt;
+    }
 }
 
 #endif // GLUON_CLASSES_HPP_
