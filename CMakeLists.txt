@@ -48,18 +48,7 @@ if (WIN32)
                 IL2CPP_USE_PLATFORM_CONFIG=1
         )
     else ()
-        add_compile_definitions(
-                IL2CPP_TARGET_CUSTOM=1
-                IL2CPP_TARGET_WINDOWS=1
-                IL2CPP_TARGET_WINDOWS_DESKTOP=1
-
-                IL2CPP_PLATFORM_SUPPORTS_SYSTEM_CERTIFICATES=1
-                IL2CPP_PLATFORM_SUPPORTS_CPU_INFO=1
-
-                _UNICODE=1
-                UNICODE=1
-                STRICT=1
-        )
+        message(SEND_ERROR "Unity versions below 6000 are not supported.")
     endif ()
 endif ()
 
@@ -86,8 +75,6 @@ target_sources(
         Gluon PRIVATE
         ${gluon_sources}
 )
-
-message(STATUS "PROCESSOR ${CMAKE_SYSTEM_PROCESSOR}")
 
 add_subdirectory(capstone)
 target_include_directories(Gluon PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/capstone/include)
