@@ -1,0 +1,34 @@
+#ifndef GLUON_CONFIG_HPP_
+#define GLUON_CONFIG_HPP_
+
+#ifdef GLUON_EXPORT
+
+/*
+ *  GLUON_API - Export and imports API functions (what it says on the tin)
+ */
+#ifdef _WIN32
+#define GLUON_API __declspec(dllexport)
+#else
+#define GLUON_API __attribute__((visibility("default")))
+#endif // _WIN32
+
+#else // GLUON_EXPORT
+
+#ifdef _WIN32
+#define GLUON_API __declspec(dllimport)
+#else // _WIN32
+#define GLUON_API
+#endif // _WIN32
+
+#endif // GLUON_EXPORT
+
+/*
+ *  GLUON_HIDDEN - Never export, never import
+ */
+#ifdef _WIN32
+#define GLUON_HIDDEN
+#else
+#define GLUON_HIDDEN __attribute__((visibility("hidden")))
+#endif // _WIN32
+
+#endif // GLUON_CONFIG_HPP_
