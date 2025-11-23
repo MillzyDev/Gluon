@@ -33,12 +33,4 @@
 #define GLUON_HIDDEN __attribute__((visibility("hidden")))
 //#endif // _WIN32
 
-#ifndef HANDLE
-#define HANDLE void *
-#endif // HANDLE
-
-#ifndef DWORD
-#define DWORD ::std::uint32_t
-#endif // DWORD
-
 #endif // GLUON_CONFIG_HPP_
