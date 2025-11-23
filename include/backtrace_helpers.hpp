@@ -1,0 +1,23 @@
+#ifndef GLUON_BACKTRACE_HELPERS_HPP_
+#define GLUON_BACKTRACE_HELPERS_HPP_
+
+#include <cstdint>
+#include <unwind.h>
+
+#include <windows.h>
+
+#include "gluon_config.hpp"
+
+namespace Gluon::BacktraceHelpers {
+    struct BacktraceState {
+        void **current;
+        void **end;
+        uint16_t skip;
+    };
+
+    GLUON_API _Unwind_Reason_Code unwindCallback(_Unwind_Context *context, void *arg);
+    GLUON_API size_t captureBacktrace(void **buffer, uint16_t max, uint16_t skip = 0);
+    GLUON_API void *getBaseForAddress(const void *address);
+} // Gluon::BacktraceHelpers
+
+#endif // GLUON_BACKTRACE_HELPERS_HPP_
