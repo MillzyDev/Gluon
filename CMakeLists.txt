@@ -3,11 +3,15 @@ project(Gluon)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED 23)
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
+set(CMAKE_CXX_STANDARD 26)
+set(CMAKE_CXX_STANDARD_REQUIRED 26)
+set(CMAKE_CXX_EXTENSIONS  )
 
 add_compile_options(-fdeclspec)
 add_compile_options(-O3)
+add_compile_options(-Wno-attributes) # probably fineeeeeee
 
 if (WIN32)
     set(CMAKE_SHARED_LIBRARY_PREFIX "")
@@ -83,3 +87,5 @@ target_link_libraries(Gluon PRIVATE dbghelp)
 target_link_libraries(Gluon PRIVATE psapi)
 
 target_compile_definitions(Gluon PRIVATE GLUON_EXPORT)
+
+message(STATUS ${IL2CPP_DIR})
