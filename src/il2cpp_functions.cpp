@@ -6,11 +6,13 @@
 #include "abortion.hpp"
 #include "gluon_logging.hpp"
 
+typedef std::intptr_t (*Il2CppApiFunction)();
+
 #define IL2CPP_INIT(rt, name, ...) rt(*Gluon::Il2CppFunctions::il2cpp_##name) __VA_ARGS__
 
-#define IL2CPP_LOAD(name) \
-*reinterpret_cast<FARPROC *>(&il2cpp_##name) = GetProcAddress(il2cppAssembly, "il2cpp_" #name);                         \
-Gluon::Logging::Logger::info("Loaded: " #name ", error: {}", GetLastError());                                           \
+#define IL2CPP_LOAD(name)                                                                                               \
+*reinterpret_cast<Il2CppApiFunction *>(&il2cpp_##name) = GetProcAddress(il2cppAssembly, "il2cpp_" #name);              \
+Gluon::Logger::info("Loaded: " #name ", error: {}", GetLastError());                                                    \
 SetLastError(0)
 
 #pragma region IL2CPP Exports
@@ -248,5 +250,257 @@ IL2CPP_INIT(void, class_set_userdata, (Il2CppClass * klass, void* userdata));
 IL2CPP_INIT(int, class_get_userdata_offset, ());
 IL2CPP_INIT(void, set_default_thread_affinity, (int64_t affinity_mask));
 #pragma endregion // IL2CPP Exports
+
+namespace Gluon {
+    void Il2CppFunctions::initialise() {
+        constexpr auto kIl2CppAssembly = "GameAssembly.dll";
+        static bool initialised = false;
+
+        if (initialised) {
+            return;
+        }
+
+        SetLastError(0);
+        HMODULE il2cppAssembly = LoadLibraryA(kIl2CppAssembly);
+        if (!il2cppAssembly) {
+            Gluon::Logger::error("Unable to load IL2CPP main assembly. Will abort.");
+            SAFE_ABORT();
+        }
+
+        IL2CPP_LOAD(init);
+        IL2CPP_LOAD(init_utf16);
+        IL2CPP_LOAD(shutdown);
+        IL2CPP_LOAD(set_config_dir);
+        IL2CPP_LOAD(set_data_dir);
+        IL2CPP_LOAD(set_temp_dir);
+        IL2CPP_LOAD(set_commandline_arguments);
+        IL2CPP_LOAD(set_commandline_arguments_utf16);
+        IL2CPP_LOAD(set_config_utf16);
+        IL2CPP_LOAD(set_config);
+        IL2CPP_LOAD(set_memory_callbacks);
+        IL2CPP_LOAD(get_corlib);
+        IL2CPP_LOAD(add_internal_call);
+        IL2CPP_LOAD(resolve_icall);
+        IL2CPP_LOAD(alloc);
+        IL2CPP_LOAD(free);
+        IL2CPP_LOAD(array_class_get);
+        IL2CPP_LOAD(array_length);
+        IL2CPP_LOAD(array_get_byte_length);
+        IL2CPP_LOAD(array_new);
+        IL2CPP_LOAD(array_new_specific);
+        IL2CPP_LOAD(array_new_full);
+        IL2CPP_LOAD(bounded_array_class_get);
+        IL2CPP_LOAD(array_element_size);
+        IL2CPP_LOAD(assembly_get_image);
+        IL2CPP_LOAD(class_for_each);
+        IL2CPP_LOAD(class_enum_basetype);
+        IL2CPP_LOAD(class_is_generic);
+        IL2CPP_LOAD(class_is_inflated);
+        IL2CPP_LOAD(class_is_assignable_from);
+        IL2CPP_LOAD(class_is_subclass_of);
+        IL2CPP_LOAD(class_has_parent);
+        IL2CPP_LOAD(class_from_il2cpp_type);
+        IL2CPP_LOAD(class_from_name);
+        IL2CPP_LOAD(class_from_system_type);
+        IL2CPP_LOAD(class_get_element_class);
+        IL2CPP_LOAD(class_get_events);
+        IL2CPP_LOAD(class_get_fields);
+        IL2CPP_LOAD(class_get_nested_types);
+        IL2CPP_LOAD(class_get_interfaces);
+        IL2CPP_LOAD(class_get_properties);
+        IL2CPP_LOAD(class_get_property_from_name);
+        IL2CPP_LOAD(class_get_field_from_name);
+        IL2CPP_LOAD(class_get_methods);
+        IL2CPP_LOAD(class_get_method_from_name);
+        IL2CPP_LOAD(class_get_name);
+        IL2CPP_LOAD(type_get_name_chunked);
+        IL2CPP_LOAD(class_get_namespace);
+        IL2CPP_LOAD(class_get_parent);
+        IL2CPP_LOAD(class_get_declaring_type);
+        IL2CPP_LOAD(class_instance_size);
+        IL2CPP_LOAD(class_num_fields);
+        IL2CPP_LOAD(class_is_valuetype);
+        IL2CPP_LOAD(class_value_size);
+        IL2CPP_LOAD(class_is_blittable);
+        IL2CPP_LOAD(class_get_flags);
+        IL2CPP_LOAD(class_is_abstract);
+        IL2CPP_LOAD(class_is_interface);
+        IL2CPP_LOAD(class_array_element_size);
+        IL2CPP_LOAD(class_from_type);
+        IL2CPP_LOAD(class_get_type);
+        IL2CPP_LOAD(class_get_type_token);
+        IL2CPP_LOAD(class_has_attribute);
+        IL2CPP_LOAD(class_has_references);
+        IL2CPP_LOAD(class_is_enum);
+        IL2CPP_LOAD(class_get_image);
+        IL2CPP_LOAD(class_get_assemblyname);
+        IL2CPP_LOAD(class_get_rank);
+        IL2CPP_LOAD(class_get_data_size);
+        IL2CPP_LOAD(class_get_static_field_data);
+        IL2CPP_LOAD(class_get_bitmap_size);
+        IL2CPP_LOAD(class_get_bitmap);
+        IL2CPP_LOAD(stats_dump_to_file);
+        IL2CPP_LOAD(stats_get_value);
+        IL2CPP_LOAD(domain_get);
+        IL2CPP_LOAD(domain_assembly_open);
+        IL2CPP_LOAD(domain_get_assemblies);
+        IL2CPP_LOAD(raise_exception);
+        IL2CPP_LOAD(exception_from_name_msg);
+        IL2CPP_LOAD(get_exception_argument_null);
+        IL2CPP_LOAD(format_exception);
+        IL2CPP_LOAD(format_stack_trace);
+        IL2CPP_LOAD(unhandled_exception);
+        IL2CPP_LOAD(field_get_flags);
+        IL2CPP_LOAD(field_get_name);
+        IL2CPP_LOAD(field_get_parent);
+        IL2CPP_LOAD(field_get_offset);
+        IL2CPP_LOAD(field_get_type);
+        IL2CPP_LOAD(field_get_value);
+        IL2CPP_LOAD(field_get_value_object);
+        IL2CPP_LOAD(field_has_attribute);
+        IL2CPP_LOAD(field_set_value);
+        IL2CPP_LOAD(field_static_get_value);
+        IL2CPP_LOAD(field_static_set_value);
+        IL2CPP_LOAD(field_set_value_object);
+        IL2CPP_LOAD(field_is_literal);
+        IL2CPP_LOAD(gc_collect);
+        IL2CPP_LOAD(gc_collect_a_little);
+        IL2CPP_LOAD(gc_disable);
+        IL2CPP_LOAD(gc_enable);
+        IL2CPP_LOAD(gc_is_disabled);
+        IL2CPP_LOAD(gc_get_max_time_slice_ns);
+        IL2CPP_LOAD(gc_set_max_time_slice_ns);
+        IL2CPP_LOAD(gc_is_incremental);
+        IL2CPP_LOAD(gc_get_used_size);
+        IL2CPP_LOAD(gc_get_heap_size);
+        IL2CPP_LOAD(gc_wbarrier_set_field);
+        IL2CPP_LOAD(gc_has_strict_wbarriers);
+        IL2CPP_LOAD(gc_set_external_allocation_tracker);
+        IL2CPP_LOAD(gc_set_external_wbarrier_tracker);
+        IL2CPP_LOAD(gc_foreach_heap);
+        IL2CPP_LOAD(gc_free_fixed);
+        IL2CPP_LOAD(gc_alloc_fixed);
+        IL2CPP_LOAD(stop_gc_world);
+        IL2CPP_LOAD(start_gc_world);
+        IL2CPP_LOAD(gchandle_new);
+        IL2CPP_LOAD(gchandle_new_weakref);
+        IL2CPP_LOAD(gchandle_get_target);
+        IL2CPP_LOAD(gchandle_free);
+        IL2CPP_LOAD(gchandle_foreach_get_target);
+        IL2CPP_LOAD(object_header_size);
+        IL2CPP_LOAD(array_object_header_size);
+        IL2CPP_LOAD(offset_of_array_length_in_array_object_header);
+        IL2CPP_LOAD(offset_of_array_bounds_in_array_object_header);
+        IL2CPP_LOAD(allocation_granularity);
+        IL2CPP_LOAD(unity_liveness_allocate_struct);
+        IL2CPP_LOAD(unity_liveness_finalize);
+        IL2CPP_LOAD(unity_liveness_free_struct);
+        IL2CPP_LOAD(unity_liveness_calculation_from_root);
+        IL2CPP_LOAD(unity_liveness_calculation_from_statics);
+        IL2CPP_LOAD(method_get_return_type);
+        IL2CPP_LOAD(method_get_declaring_type);
+        IL2CPP_LOAD(method_get_name);
+        IL2CPP_LOAD(method_get_from_reflection);
+        IL2CPP_LOAD(method_get_object);
+        IL2CPP_LOAD(method_is_generic);
+        IL2CPP_LOAD(method_is_inflated);
+        IL2CPP_LOAD(method_is_instance);
+        IL2CPP_LOAD(method_get_param_count);
+        IL2CPP_LOAD(method_get_param);
+        IL2CPP_LOAD(method_get_class);
+        IL2CPP_LOAD(method_has_attribute);
+        IL2CPP_LOAD(method_get_flags);
+        IL2CPP_LOAD(method_get_token);
+        IL2CPP_LOAD(method_get_param_name);
+        IL2CPP_LOAD(profiler_install);
+        IL2CPP_LOAD(profiler_set_events);
+        IL2CPP_LOAD(profiler_install_enter_leave);
+        IL2CPP_LOAD(profiler_install_allocation);
+        IL2CPP_LOAD(profiler_install_gc);
+        IL2CPP_LOAD(profiler_install_fileio);
+        IL2CPP_LOAD(profiler_install_thread);
+        IL2CPP_LOAD(property_get_flags);
+        IL2CPP_LOAD(property_get_get_method);
+        IL2CPP_LOAD(property_get_set_method);
+        IL2CPP_LOAD(property_get_name);
+        IL2CPP_LOAD(property_get_parent);
+        IL2CPP_LOAD(object_get_class);
+        IL2CPP_LOAD(object_get_size);
+        IL2CPP_LOAD(object_get_virtual_method);
+        IL2CPP_LOAD(object_new);
+        IL2CPP_LOAD(object_unbox);
+        IL2CPP_LOAD(value_box);
+        IL2CPP_LOAD(monitor_enter);
+        IL2CPP_LOAD(monitor_try_enter);
+        IL2CPP_LOAD(monitor_exit);
+        IL2CPP_LOAD(monitor_pulse);
+        IL2CPP_LOAD(monitor_pulse_all);
+        IL2CPP_LOAD(monitor_wait);
+        IL2CPP_LOAD(monitor_try_wait);
+        IL2CPP_LOAD(runtime_invoke);
+        IL2CPP_LOAD(runtime_invoke_convert_args);
+        IL2CPP_LOAD(runtime_class_init);
+        IL2CPP_LOAD(runtime_object_init);
+        IL2CPP_LOAD(runtime_object_init_exception);
+        IL2CPP_LOAD(runtime_unhandled_exception_policy_set);
+        IL2CPP_LOAD(string_length);
+        IL2CPP_LOAD(string_chars);
+        IL2CPP_LOAD(string_new);
+        IL2CPP_LOAD(string_new_len);
+        IL2CPP_LOAD(string_new_utf16);
+        IL2CPP_LOAD(string_new_wrapper);
+        IL2CPP_LOAD(string_intern);
+        IL2CPP_LOAD(string_is_interned);
+        IL2CPP_LOAD(thread_current);
+        IL2CPP_LOAD(thread_attach);
+        IL2CPP_LOAD(thread_detach);
+        IL2CPP_LOAD(thread_get_all_attached_threads);
+        IL2CPP_LOAD(is_vm_thread);
+        IL2CPP_LOAD(current_thread_walk_frame_stack);
+        IL2CPP_LOAD(thread_walk_frame_stack);
+        IL2CPP_LOAD(current_thread_get_top_frame);
+        IL2CPP_LOAD(thread_get_top_frame);
+        IL2CPP_LOAD(current_thread_get_frame_at);
+        IL2CPP_LOAD(thread_get_frame_at);
+        IL2CPP_LOAD(current_thread_get_stack_depth);
+        IL2CPP_LOAD(thread_get_stack_depth);
+        IL2CPP_LOAD(override_stack_backtrace);
+        IL2CPP_LOAD(type_get_object);
+        IL2CPP_LOAD(type_get_type);
+        IL2CPP_LOAD(type_get_class_or_element_class);
+        IL2CPP_LOAD(type_get_name);
+        IL2CPP_LOAD(type_is_byref);
+        IL2CPP_LOAD(type_get_attrs);
+        IL2CPP_LOAD(type_equals);
+        IL2CPP_LOAD(type_get_assembly_qualified_name);
+        IL2CPP_LOAD(type_is_static);
+        IL2CPP_LOAD(type_is_pointer_type);
+        IL2CPP_LOAD(image_get_assembly);
+        IL2CPP_LOAD(image_get_name);
+        IL2CPP_LOAD(image_get_filename);
+        IL2CPP_LOAD(image_get_entry_point);
+        IL2CPP_LOAD(image_get_class_count);
+        IL2CPP_LOAD(image_get_class);
+        IL2CPP_LOAD(capture_memory_snapshot);
+        IL2CPP_LOAD(free_captured_memory_snapshot);
+        IL2CPP_LOAD(set_find_plugin_callback);
+        IL2CPP_LOAD(register_log_callback);
+        IL2CPP_LOAD(debugger_set_agent_options);
+        IL2CPP_LOAD(is_debugger_attached);
+        IL2CPP_LOAD(register_debugger_agent_transport);
+        IL2CPP_LOAD(debug_get_method_info);
+        IL2CPP_LOAD(unity_install_unitytls_interface);
+        IL2CPP_LOAD(custom_attrs_from_class);
+        IL2CPP_LOAD(custom_attrs_from_method);
+        IL2CPP_LOAD(custom_attrs_get_attr);
+        IL2CPP_LOAD(custom_attrs_has_attr);
+        IL2CPP_LOAD(custom_attrs_construct);
+        IL2CPP_LOAD(custom_attrs_free);
+        IL2CPP_LOAD(class_set_userdata);
+        IL2CPP_LOAD(class_get_userdata_offset);
+
+    }
+
+}
 
 // TODO: traces
