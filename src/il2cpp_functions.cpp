@@ -248,3 +248,5 @@ IL2CPP_INIT(void, class_set_userdata, (Il2CppClass * klass, void* userdata));
 IL2CPP_INIT(int, class_get_userdata_offset, ());
 IL2CPP_INIT(void, set_default_thread_affinity, (int64_t affinity_mask));
 #pragma endregion // IL2CPP Exports
+
+// TODO: traces

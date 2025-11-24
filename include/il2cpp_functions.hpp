@@ -29,6 +29,7 @@
 
 namespace Gluon {
     class GLUON_API Il2CppFunctions {
+    public:
 #pragma region IL2CPP Exports
         IL2CPP_FUNC(int, init, (const char* domain_name));
         IL2CPP_FUNC(int, init_utf16, (const Il2CppChar * domain_name));
