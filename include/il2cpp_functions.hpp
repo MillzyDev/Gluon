@@ -266,7 +266,7 @@ namespace Gluon {
         IL2CPP_FUNC(void, set_default_thread_affinity, (int64_t affinity_mask));
 #pragma endregion // IL2CPP Exports
 
-        void initialise();
+        static void initialise();
     }; // Il2CppFunctions
 } // Gluon
 
