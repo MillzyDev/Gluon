@@ -9,16 +9,16 @@
 
 #define FORMAT_LOGGER(name, adapter, func)                                                                              \
     template<typename ...TArgs>                                                                                         \
-    inline static void name(::std::format_string<TArgs...> format, TArgs &&...args) {                              \
+    inline static void name(::std::format_string<TArgs...> format, TArgs &&...args) {                                   \
         if (!adapter) {                                                                                                 \
             return;                                                                                                     \
         }                                                                                                               \
-        adapter->func(::std::vformat(format.get(), ::std::make_format_args(args...)));                                  \
+        adapter->func(format.get(), ::std::make_format_args(args...));                                                  \
     }
 
 namespace Gluon {
     /**
-     *  Interface for feeding Gluon's log into another logging system.
+     *  Interface for feeding Gluon's unformatted logs into a log system.
      *  Recommended implementation be done though some form of blocking queue.
      */
     // ReSharper disable once CppClassCanBeFinal
@@ -26,11 +26,11 @@ namespace Gluon {
     public:
         virtual ~LoggerAdapter() = default;
 
-        virtual void log(const std::string &message);
-        virtual void logInfo(const std::string &message);
-        virtual void logWarning(const std::string &message);
-        virtual void logError(const std::string &message);
-        virtual void logDebug(const std::string &message);
+        virtual void log(std::string_view fmt, std::format_args args);
+        virtual void logInfo(std::string_view fmt, std::format_args args);
+        virtual void logWarning(std::string_view fmt, std::format_args args);
+        virtual void logError(std::string_view fmt, std::format_args args);
+        virtual void logDebug(std::string_view fmt, std::format_args args);
     }; // LoggerAdapter
 
     class GLUON_API Logger {

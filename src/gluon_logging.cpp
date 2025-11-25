@@ -6,11 +6,11 @@
 namespace Gluon {
     std::unique_ptr<LoggerAdapter> Gluon::Logger::_loggerAdapter = nullptr;
 
-    void LoggerAdapter::log(const std::string &message) {}
-    void LoggerAdapter::logInfo(const std::string &message) {}
-    void LoggerAdapter::logWarning(const std::string &message) {}
-    void LoggerAdapter::logError(const std::string &message) {}
-    void LoggerAdapter::logDebug(const std::string &message) {}
+    void LoggerAdapter::log(std::string_view fmt, std::format_args args) {}
+    void LoggerAdapter::logInfo(std::string_view fmt, std::format_args args) {}
+    void LoggerAdapter::logWarning(std::string_view fmt, std::format_args args) {}
+    void LoggerAdapter::logError(std::string_view fmt, std::format_args args) {}
+    void LoggerAdapter::logDebug(std::string_view fmt, std::format_args args) {}
 
     void Logger::logBacktraceFull(void *const *stackTraceBuffer, uint16_t stackTraceSize) {
         static HANDLE currentProcess = nullptr;
