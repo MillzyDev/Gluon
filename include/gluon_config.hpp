@@ -33,4 +33,8 @@
 #define GLUON_HIDDEN __attribute__((visibility("hidden")))
 //#endif // _WIN32
 
+#if !defined(UNITY_6000) // || !defined(...) ...
+#error "Unsupported unity version"
+#endif // UNITY_6000 || ...
+
 #endif // GLUON_CONFIG_HPP_
