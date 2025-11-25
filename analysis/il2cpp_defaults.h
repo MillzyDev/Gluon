@@ -1,0 +1,137 @@
+struct Il2CppImage;
+//struct Il2CppClass;
+//struct MethodInfo;
+
+typedef struct Il2CppDefaults
+{
+    Il2CppImage *corlib;
+    Il2CppImage *corlib_gen;
+    Il2CppClass *object_class;
+    Il2CppClass *byte_class;
+    Il2CppClass *void_class;
+    Il2CppClass *boolean_class;
+    Il2CppClass *sbyte_class;
+    Il2CppClass *int16_class;
+    Il2CppClass *uint16_class;
+    Il2CppClass *int32_class;
+    Il2CppClass *uint32_class;
+    Il2CppClass *int_class;
+    Il2CppClass *uint_class;
+    Il2CppClass *int64_class;
+    Il2CppClass *uint64_class;
+    Il2CppClass *single_class;
+    Il2CppClass *double_class;
+    Il2CppClass *char_class;
+    Il2CppClass *string_class;
+    Il2CppClass *enum_class;
+    Il2CppClass *array_class;
+    Il2CppClass *delegate_class;
+    Il2CppClass *multicastdelegate_class;
+    Il2CppClass *asyncresult_class;
+    Il2CppClass *manualresetevent_class;
+    Il2CppClass *typehandle_class;
+    Il2CppClass *fieldhandle_class;
+    Il2CppClass *methodhandle_class;
+    Il2CppClass *systemtype_class;
+    Il2CppClass *monotype_class;
+    Il2CppClass *exception_class;
+    Il2CppClass *threadabortexception_class;
+    Il2CppClass *thread_class;
+    Il2CppClass *internal_thread_class;
+    /*Il2CppClass *transparent_proxy_class;
+    Il2CppClass *real_proxy_class;
+    Il2CppClass *mono_method_message_class;*/
+    Il2CppClass *appdomain_class;
+    Il2CppClass *appdomain_setup_class;
+    Il2CppClass *member_info_class;
+    Il2CppClass *field_info_class;
+    Il2CppClass *method_info_class;
+    Il2CppClass *property_info_class;
+    Il2CppClass *event_info_class;
+    Il2CppClass *stringbuilder_class;
+    /*Il2CppClass *math_class;*/
+    Il2CppClass *stack_frame_class;
+    Il2CppClass *stack_trace_class;
+    Il2CppClass *marshal_class;
+    /*Il2CppClass *iserializeable_class;
+    Il2CppClass *serializationinfo_class;
+    Il2CppClass *streamingcontext_class;*/
+    Il2CppClass *typed_reference_class;
+    /*Il2CppClass *argumenthandle_class;*/
+    Il2CppClass *marshalbyrefobject_class;
+    /*Il2CppClass *monitor_class;
+    Il2CppClass *iremotingtypeinfo_class;
+    Il2CppClass *runtimesecurityframe_class;
+    Il2CppClass *executioncontext_class;
+    Il2CppClass *internals_visible_class;*/
+    Il2CppClass *generic_ilist_class;
+    Il2CppClass *generic_icollection_class;
+    Il2CppClass *generic_ienumerable_class;
+    Il2CppClass *generic_ireadonlylist_class;
+    Il2CppClass *generic_ireadonlycollection_class;
+    Il2CppClass *runtimetype_class;
+    Il2CppClass *generic_nullable_class;
+    /*Il2CppClass *variant_class;
+    Il2CppClass *com_object_class;*/
+    Il2CppClass *il2cpp_com_object_class;
+    /*Il2CppClass *com_interop_proxy_class;
+    Il2CppClass *iunknown_class;
+    Il2CppClass *idispatch_class;
+    Il2CppClass *safehandle_class;
+    Il2CppClass *handleref_class;*/
+    Il2CppClass *attribute_class;
+    Il2CppClass *customattribute_data_class;
+    Il2CppClass *customattribute_typed_argument_class;
+    Il2CppClass *customattribute_named_argument_class;
+    //Il2CppClass *critical_finalizer_object;
+    Il2CppClass *version;
+    Il2CppClass *culture_info;
+    Il2CppClass *async_call_class;
+    Il2CppClass *assembly_class;
+    Il2CppClass *assembly_name_class;
+    Il2CppClass *parameter_info_class;
+    Il2CppClass *module_class;
+    Il2CppClass *system_exception_class;
+    Il2CppClass *argument_exception_class;
+    Il2CppClass *wait_handle_class;
+    Il2CppClass *safe_handle_class;
+    Il2CppClass *sort_key_class;
+    Il2CppClass *dbnull_class;
+    Il2CppClass *error_wrapper_class;
+    Il2CppClass *missing_class;
+    Il2CppClass *value_type_class;
+
+    // Stuff used by the mono code
+    Il2CppClass *threadpool_wait_callback_class;
+    MethodInfo *threadpool_perform_wait_callback_method;
+    Il2CppClass *mono_method_message_class;
+
+    // Windows.Foundation.IReference`1<T>
+    Il2CppClass* ireference_class;
+    // Windows.Foundation.IReferenceArray`1<T>
+    Il2CppClass* ireferencearray_class;
+    // Windows.Foundation.Collections.IKeyValuePair`2<K, V>
+    Il2CppClass* ikey_value_pair_class;
+    // System.Collections.Generic.KeyValuePair`2<K, V>
+    Il2CppClass* key_value_pair_class;
+    // Windows.Foundation.Uri
+    Il2CppClass* windows_foundation_uri_class;
+    // Windows.Foundation.IUriRuntimeClass
+    Il2CppClass* windows_foundation_iuri_runtime_class_class;
+    // System.Uri
+    Il2CppClass* system_uri_class;
+    // System.Guid
+    Il2CppClass* system_guid_class;
+
+    Il2CppClass* sbyte_shared_enum;
+    Il2CppClass* int16_shared_enum;
+    Il2CppClass* int32_shared_enum;
+    Il2CppClass* int64_shared_enum;
+
+    Il2CppClass* byte_shared_enum;
+    Il2CppClass* uint16_shared_enum;
+    Il2CppClass* uint32_shared_enum;
+    Il2CppClass* uint64_shared_enum;
+    Il2CppClass* il2cpp_fully_shared_type;
+    Il2CppClass* il2cpp_fully_shared_struct_type;
+} Il2CppDefaults;
