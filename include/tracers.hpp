@@ -8,12 +8,18 @@
 #include "gluon_logging.hpp"
 #include "capstone/capstone.h"
 
+#define ADDR_PTR(...) reinterpret_cast<AddrPtr>(__VA_ARGS__)
+
+typedef std::uint32_t *AddrPtr;
+
 namespace Gluon::Tracers {
     GLUON_API void initCapstone();
     GLUON_API csh getCapstone();
 
     template <std::uint32_t N, x86_insn Instruction, std::uint8_t Operand>
     GLUON_HIDDEN std::uint32_t *findNth(const std::uint32_t *address) {
+        initCapstone();
+
         cs_insn *insn = cs_malloc(getCapstone());
         auto ptr = reinterpret_cast<std::uint64_t>(address);
         auto instructions = reinterpret_cast<const std::uint8_t *>(address);
