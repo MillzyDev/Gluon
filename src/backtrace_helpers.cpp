@@ -11,7 +11,7 @@ namespace Gluon::BacktraceHelpers {
     _Unwind_Reason_Code unwindCallback(struct _Unwind_Context *context, void *arg) {
         auto *state = static_cast<BacktraceState *>(arg);
 
-        if (const uintptr_t pc = _Unwind_GetIP(context)) {
+        if (const uintptr_t pc = _Unwind_GetIP(context)) { // pc is the instruction pointer here (should maybe rename)
             if (state->current == state->end) {
                 return _URC_END_OF_STACK;
             }

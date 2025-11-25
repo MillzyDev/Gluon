@@ -29,23 +29,23 @@ namespace Gluon::Tracers {
         std::uint32_t n = N;
 
         while (cs_disasm_iter(getCapstone(), &instructions, &size, &ptr, insn)) {
-            if (insn->id == Instruction) {
+            if (insn->id == Instruction) { // decrement counter if instruction is a match
                 n -= 1;
             }
 
-            if (n == 0) {
+            if (n == 0) { // when we reach nth instruction
                 const cs_detail *detail = insn->detail;
                 const cs_x86 arch = detail->x86;
 
                 switch (const cs_x86_op operand = arch.operands[Operand]; operand.type) {
-                    case X86_OP_IMM:
+                    case X86_OP_IMM: // capstone calculates the address, only need to cast
                         return reinterpret_cast<std::uint32_t *>(operand.imm);
                     case X86_OP_MEM:
                         if (operand.mem.base != X86_REG_RIP) {
                             Gluon::Logger::warn("Instruction targeted at 0x{:x} (n={}, target={}) with MEM operand at index {} is not relative to Instruction Pointer.", insn->address, N, cs_insn_name(getCapstone(), Instruction), Operand);
                             break;
                         }
-
+                        // for any rip-relative address: instruction address + instruction size + encoded displacement
                         return reinterpret_cast<std::uint32_t *>(insn->address + insn->size + operand.mem.disp);
                     default:
                         Gluon::Logger::warn("Instruction targeted at 0x{:x} (n={}, target={}) cannot be decoded; operand at index {} is not immediate nor a memory address.", insn->address, N, cs_insn_name(getCapstone(), Instruction), Operand);
