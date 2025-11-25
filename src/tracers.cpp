@@ -4,9 +4,13 @@
 #include "gluon_logging.hpp"
 
 namespace Gluon::Tracers {
-    static csh capstoneHandle;
+    static csh capstoneHandle = 0;
 
     void initCapstone() {
+        if (capstoneHandle) {
+            return;
+        }
+
         const cs_err csError = cs_open(CS_ARCH_X86, CS_MODE_64, &capstoneHandle);
         cs_option(capstoneHandle, CS_OPT_DETAIL, 1);
         if (csError) {
