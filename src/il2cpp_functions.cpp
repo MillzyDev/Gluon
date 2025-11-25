@@ -267,6 +267,7 @@ namespace Gluon {
             SAFE_ABORT();
         }
 
+#pragma region IL2CPP API Load
         IL2CPP_LOAD(init);
         IL2CPP_LOAD(init_utf16);
         IL2CPP_LOAD(shutdown);
@@ -498,9 +499,10 @@ namespace Gluon {
         IL2CPP_LOAD(custom_attrs_free);
         IL2CPP_LOAD(class_set_userdata);
         IL2CPP_LOAD(class_get_userdata_offset);
+#pragma endregion // IL2CPP API Load
 
     }
 
-}
+} // Gluon
 
 // TODO: traces
