@@ -19,7 +19,7 @@ namespace Gluon::Assemblies {
         // ReSharper disable once CppDFALocalValueEscapesFunction
         // technically undefined behaviour
         // the vector this (sort of) addresses is in static storage and only gets populated once tho so :P
-        return std::span(assemblies, size);
+        return {assemblies, size};
     }
 
     std::vector<const Il2CppClass *> getAssemblyClasses(const Il2CppAssembly *assembly) {
