@@ -502,20 +502,6 @@ namespace Gluon {
 #pragma endregion // IL2CPP API Load
 
         initialised = true;
-
-        std::size_t size; // \/ \/ \/ \/ "undefined behaviour" causer - best hope that vector doesn't get modified TwT
-        const Il2CppAssembly **assemblies = Gluon::Il2CppFunctions::domain_get_assemblies(Gluon::Il2CppFunctions::domain_get(), &size);
-
-        for (std::size_t i = 0; i < size; ++i) {
-            const Il2CppAssembly *assembly = assemblies[i];
-
-            std::size_t classCount = Gluon::Il2CppFunctions::image_get_class_count(assembly->image);
-
-            for (std::size_t j = 0; j < classCount; ++j) {
-                const Il2CppClass *klass = Gluon::Il2CppFunctions::image_get_class(assembly->image, j);
-                Gluon::Logger::info("Found class:\t{}.{}", klass->namespaze, klass->name);
-            }
-        }
     }
 
 } // Gluon
