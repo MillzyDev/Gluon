@@ -21,12 +21,4 @@ namespace Gluon::Assemblies {
         // the vector this (sort of) addresses is in static storage and only gets populated once tho so :P
         return {assemblies, size};
     }
-
-    std::vector<const Il2CppClass *> getAssemblyClasses(const Il2CppAssembly *assembly) {
-        const Il2CppImage *image = Gluon::Il2CppFunctions::assembly_get_image(assembly);
-        std::size_t size = Gluon::Il2CppFunctions::image_get_class_count(image);
-
-        std::vector<const Il2CppClass *> vec;
-        Gluon::Il2CppFunctions::class_from_name()
-    }
 } // Gluon::Assemblies
