@@ -91,7 +91,6 @@ set(SPDLOG_BUILD_SHARED ON)
 set(SPDLOG_BUILD_PIC ON)
 
 if(TARGET spdlog::spdlog)
-    add_subdirectory(${CMAKE_SOURCE_DIR}/spdlog)
     target_include_directories(Gluon PRIVATE "${CMAKE_SOURCE_DIR}/spdlog/include")
 else()
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/spdlog)
