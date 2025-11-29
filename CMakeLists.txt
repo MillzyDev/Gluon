@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED 26)
 set(CMAKE_CXX_EXTENSIONS  )
 
-add_compile_options(-fdeclspec)
+add_link_options(-fdeclspec)
 add_compile_options(-O3)
 add_compile_options(-Wno-attributes) # probably fineeeeeee
 
