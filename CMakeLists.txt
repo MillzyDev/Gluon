@@ -80,9 +80,14 @@ target_sources(
         ${gluon_sources}
 )
 
+# CAPSTONE DEPENDENCY
+set(CAPSTONE_ARCHITECTURE_DEFAULT OFF)
+set(CAPSTONE_X86_SUPPORT ON)
+
 add_subdirectory(capstone)
 target_include_directories(Gluon PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/capstone/include)
 target_link_libraries(Gluon PRIVATE capstone)
+
 target_link_libraries(Gluon PRIVATE dbghelp)
 target_link_libraries(Gluon PRIVATE psapi)
 
