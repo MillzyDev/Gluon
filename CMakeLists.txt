@@ -89,8 +89,14 @@ target_link_libraries(Gluon PRIVATE capstone)
 
 set(SPDLOG_BUILD_SHARED ON)
 set(SPDLOG_BUILD_PIC ON)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/spdlog)
-target_include_directories(Gluon PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/spdlog/include")
+
+if(TARGET spdlog::spdlog)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/spdlog)
+    target_include_directories(Gluon PRIVATE "${CMAKE_SOURCE_DIR}/spdlog/include")
+else()
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/spdlog)
+    target_include_directories(Gluon PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/spdlog/include")
+endif ()
 target_link_libraries(Gluon PRIVATE spdlog::spdlog)
 
 target_link_libraries(Gluon PRIVATE dbghelp)
