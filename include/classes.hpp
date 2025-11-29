@@ -3,10 +3,12 @@
 
 #include <string_view>
 
+#include "gluon_config.hpp"
+
 #include "il2cpp-class-internals.h"
 
 namespace Gluon::Classes {
-    Il2CppClass *findClass(std::string_view namespaze, std::string_view klass);
+    GLUON_API Il2CppClass *findClass(std::string_view namespaze, std::string_view klass);
 } // Gluon::Classes
 
 #endif // GLUON_CLASSES_HPP_
