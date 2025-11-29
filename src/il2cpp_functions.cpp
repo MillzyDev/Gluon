@@ -505,5 +505,3 @@ namespace Gluon {
     }
 
 } // Gluon
-
-// TODO: traces
