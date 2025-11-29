@@ -38,14 +38,14 @@ namespace Gluon {
     inline void logBacktrace() {
         constexpr uint16_t kStackTraceMaxSize = 256;
         void *stackTraceBuffer[kStackTraceMaxSize];
-        uint16_t stackTraceSize = Gluon::BacktraceHelpers::captureBacktrace(stackTraceBuffer, kStackTraceMaxSize);
-        Gluon::Logger::logBacktraceFull(stackTraceBuffer, stackTraceSize);
+        const uint16_t stackTraceSize = Gluon::BacktraceHelpers::captureBacktrace(stackTraceBuffer, kStackTraceMaxSize);
+        Gluon::logBacktraceFull(stackTraceBuffer, stackTraceSize);
     }
 
     [[noreturn]] inline void safeAbort(const char *func, const char *file, int line, uint16_t frameCount = 512) {
         for (int i = 0; i < 2; i++) {
             std::this_thread::sleep_for(std::chrono::milliseconds(100)); // 0.1s
-            Gluon::Logger::warn("Aborting in {} at {}:{}", func, file, line);
+            Gluon::getLogger()->warn("Aborting in {} at {}:{}", func, file, line);
         }
         logBacktrace();
         //Gluon::Logger::flush();
@@ -57,8 +57,8 @@ namespace Gluon {
     [[noreturn]] void safeAbortMsg(const char *func, const char *file, int line, std::format_string<TArgs...> fmt, TArgs &&...args) {
         for (int i = 0; i < 2; i++) {
             std::this_thread::sleep_for(std::chrono::milliseconds(100)); // 0.1s
-            Gluon::Logger::warn("Aborting in {} at {}:{}", func, file, line);
-            Gluon::Logger::warn(fmt, std::forward<TArgs>(args)...);
+            Gluon::getLogger()->warn("Aborting in {} at {}:{}", func, file, line);
+            Gluon::getLogger()->warn(fmt, std::forward<TArgs>(args)...);
         }
         logBacktrace();
         //Gluon::Logger::flush();
@@ -94,6 +94,6 @@ namespace Gluon {
 
         return unwrapOptionals(arg);
     }
-}
+} // Gluon
 
 #endif // GLUON_ABORTION_HPP_

@@ -7,7 +7,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED 26)
-set(CMAKE_CXX_EXTENSIONS  )
+set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
 add_link_options(-fdeclspec)
 add_compile_options(-O3)
@@ -44,7 +44,6 @@ add_compile_definitions(
 )
 
 set(IL2CPP_DIR "${UNITY_DIRECTORY}/Editor/Data/il2cpp/libil2cpp")
-message(STATUS ${IL2CPP_DIR})
 if (WIN32)
     if (${UNITY_MAJOR} GREATER_EQUAL 6000)
         include_directories("${CMAKE_SOURCE_DIR}/platform")
@@ -85,12 +84,15 @@ set(CAPSTONE_ARCHITECTURE_DEFAULT OFF)
 set(CAPSTONE_X86_SUPPORT ON)
 
 add_subdirectory(capstone)
-target_include_directories(Gluon PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/capstone/include)
+target_include_directories(Gluon PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/capstone/include)
 target_link_libraries(Gluon PRIVATE capstone)
 
 target_link_libraries(Gluon PRIVATE dbghelp)
 target_link_libraries(Gluon PRIVATE psapi)
 
-target_compile_definitions(Gluon PRIVATE GLUON_EXPORT)
+set(SPDLOG_BUILD_SHARED ON)
+set(SPDLOG_BUILD_PIC ON)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/spdlog)
+target_include_directories(Gluon PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/spdlog/include")
 
-message(STATUS ${IL2CPP_DIR})
+target_compile_definitions(Gluon PRIVATE GLUON_EXPORT)

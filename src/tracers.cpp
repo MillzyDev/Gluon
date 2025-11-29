@@ -14,10 +14,10 @@ namespace Gluon::Tracers {
         const cs_err csError = cs_open(CS_ARCH_X86, CS_MODE_64, &capstoneHandle);
         cs_option(capstoneHandle, CS_OPT_DETAIL, 1);
         if (csError) {
-            Gluon::Logger::error("Capstone initialisation failed! {0}", static_cast<int>(csError));
+            Gluon::getLogger()->error("Capstone initialisation failed! {0}", static_cast<int>(csError));
             SAFE_ABORT();
         }
-        Gluon::Logger::info("Capstone initialised!");
+        Gluon::getLogger()->info("Capstone initialised!");
     }
 
     csh getCapstone() {

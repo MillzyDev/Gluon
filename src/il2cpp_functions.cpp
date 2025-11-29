@@ -11,8 +11,8 @@ typedef std::intptr_t (*Il2CppApiFunction)();
 #define IL2CPP_INIT(rt, name, ...) rt(*Gluon::Il2CppFunctions::il2cpp_##name) __VA_ARGS__
 
 #define IL2CPP_LOAD(name)                                                                                               \
-*reinterpret_cast<Il2CppApiFunction *>(&il2cpp_##name) = GetProcAddress(il2cppAssembly, "il2cpp_" #name);              \
-Gluon::Logger::info("Loaded: " #name ", error: {}", GetLastError());                                                    \
+*reinterpret_cast<Il2CppApiFunction *>(&il2cpp_##name) = GetProcAddress(il2cppAssembly, "il2cpp_" #name);               \
+Gluon::getLogger()->info("Loaded: " #name ", error: {}", GetLastError());                                               \
 SetLastError(0)
 
 #pragma region IL2CPP Exports
@@ -263,7 +263,7 @@ namespace Gluon {
         SetLastError(0);
         HMODULE il2cppAssembly = LoadLibraryA(kIl2CppAssembly);
         if (!il2cppAssembly) {
-            Gluon::Logger::error("Unable to load IL2CPP main assembly. Will abort.");
+            Gluon::getLogger()->error("Unable to load IL2CPP main assembly. Will abort.");
             SAFE_ABORT();
         }
 

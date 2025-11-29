@@ -42,13 +42,13 @@ namespace Gluon::Tracers {
                         return reinterpret_cast<std::uint32_t *>(operand.imm);
                     case X86_OP_MEM:
                         if (operand.mem.base != X86_REG_RIP) {
-                            Gluon::Logger::warn("Instruction targeted at 0x{:x} (n={}, target={}) with MEM operand at index {} is not relative to Instruction Pointer.", insn->address, N, cs_insn_name(getCapstone(), Instruction), Operand);
+                            Gluon::getLogger()->warn("Instruction targeted at 0x{:x} (n={}, target={}) with MEM operand at index {} is not relative to Instruction Pointer.", insn->address, N, cs_insn_name(getCapstone(), Instruction), Operand);
                             break;
                         }
                         // for any rip-relative address: instruction address + instruction size + encoded displacement
                         return reinterpret_cast<std::uint32_t *>(insn->address + insn->size + operand.mem.disp);
                     default:
-                        Gluon::Logger::warn("Instruction targeted at 0x{:x} (n={}, target={}) cannot be decoded; operand at index {} is not immediate nor a memory address.", insn->address, N, cs_insn_name(getCapstone(), Instruction), Operand);
+                        Gluon::getLogger()->warn("Instruction targeted at 0x{:x} (n={}, target={}) cannot be decoded; operand at index {} is not immediate nor a memory address.", insn->address, N, cs_insn_name(getCapstone(), Instruction), Operand);
                         break;
                 }
 
@@ -56,7 +56,7 @@ namespace Gluon::Tracers {
             }
         }
 
-        Gluon::Logger::warn("Could not find {} instruction (n={}) in the available buffer.", cs_insn_name(getCapstone(), Instruction), N);
+        Gluon::getLogger()->warn("Could not find {} instruction (n={}) in the available buffer.", cs_insn_name(getCapstone(), Instruction), N);
         cs_free(insn, 1);
         return nullptr;
     }
