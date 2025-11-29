@@ -2,8 +2,8 @@
 
 #include "gluon_logging.hpp"
 
-#include <dbghelp.h>
 #include <windows.h>
+#include <dbghelp.h>
 
 namespace Gluon {
     void logBacktraceFull(void *const *stackTraceBuffer, uint16_t stackTraceSize) {
