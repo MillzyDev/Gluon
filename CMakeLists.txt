@@ -84,7 +84,7 @@ set(CAPSTONE_ARCHITECTURE_DEFAULT OFF)
 set(CAPSTONE_X86_SUPPORT ON)
 
 add_subdirectory(capstone)
-target_include_directories(Gluon PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/capstone/include)
+target_include_directories(Gluon PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/capstone/include)
 target_link_libraries(Gluon PRIVATE capstone)
 
 set(SPDLOG_BUILD_SHARED ON)
